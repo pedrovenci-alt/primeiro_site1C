@@ -436,3 +436,84 @@ footer {
     text-align: center;
     padding: 16px;
     font-size: 0.85rem;
+
+    /* --- ADICIONADO PARA A NOVA TELA INICIAL --- */
+.menu-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.sub-menu {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+}
+
+/* Botão Jogar Principal */
+.btn-play {
+    width: 80%;
+    justify-content: center;
+    background-color: var(--accent) !important;
+    color: #3e2723 !important;
+    box-shadow: 0 6px 0px #b78100 !important;
+}
+.btn-play:active {
+    box-shadow: 0 1px 0px #b78100 !important;
+}
+
+/* Botões Secundários */
+.btn-info {
+    background-color: #0288d1 !important;
+    box-shadow: 0 5px 0px #01579b !important;
+}
+.btn-tips {
+    background-color: #8e24aa !important;
+    box-shadow: 0 5px 0px #4a148c !important;
+}
+.btn-info:active, .btn-tips:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0px transparent !important;
+}
+
+/* Painel de Texto Explicativo (Modal Interno) */
+.modal-info {
+    background-color: #e3f2fd;
+    border: 3px solid #1e88e5;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 25px;
+    text-align: left;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-info h3 {
+    color: #0d47a1;
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-info ul {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.modal-info li {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #1a237e;
+}
+
+.btn-close {
+    background-color: #1e88e5 !important;
+    box-shadow: 0 4px 0px #0d47a1 !important;
+    padding: 8px 20px !important;
+    font-size: 0.95rem !important;
+}

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fazenda AgroCarbono - Agrinho 2026</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome atualizado para suportar os novos ícones rurais -->
     <link rel="stylesheet" href="https://cloudflare.com">
 </head>
 <body>
@@ -16,15 +15,10 @@
         <div class="cloud cloud2"><i class="fa-solid fa-cloud"></i></div>
 
         <div class="farm-scenery">
-            <!-- Caminhão na estrada e Colheitadeira no campo -->
             <div class="farm-item truck-anim"><i class="fa-solid fa-truck-field"></i></div>
             <div class="farm-item harvester-anim"><i class="fa-solid fa-tractor"></i></div>
-
-            <!-- Personagens Trabalhadores Humanos 2D -->
             <div class="farm-item farmer-1"><i class="fa-solid fa-user-farmer"></i></div>
             <div class="farm-item farmer-2"><i class="fa-solid fa-user-wheat"></i></div>
-
-            <!-- Animais e Plantações em crescimento -->
             <div class="farm-item cow-anim"><i class="fa-solid fa-cow"></i></div>
             <div class="farm-item plant-anim p1"><i class="fa-solid fa-seedling"></i></div>
             <div class="farm-item plant-anim p2"><i class="fa-solid fa-wheat-awn"></i></div>
@@ -45,12 +39,34 @@
     <!-- Painel Central do Jogo -->
     <main class="game-container">
         
-        <!-- Tela Inicial -->
+        <!-- NOVA TELA INICIAL INTERATIVA -->
         <div id="start-screen" class="screen">
-            <div class="welcome-badge"><i class="fa-solid fa-farm"></i> MINHA FAZENDA VERDE</div>
+            <div class="welcome-badge"><i class="fa-solid fa-farm"></i> PAINEL DE CONTROLE RURAL</div>
             <h1>Desafio da Carbonização no Campo</h1>
-            <p>Ajude os nossos fazendeiros, cuide dos animais e opere o maquinário! Tome as decisões certas para segurar o carbono no solo e manter o céu azul na nossa fazendinha.</p>
-            <button id="btn-start" class="btn btn-large animate-pulse">Entrar na Fazenda <i class="fa-solid fa-door-open"></i></button>
+            <p>Monitore o maquinário, ajude os fazendeiros e tome decisões ecológicas para reter o carbono na terra!</p>
+            
+            <!-- Menu de Botões da Tela Inicial -->
+            <div class="menu-container">
+                <button id="btn-start" class="btn btn-large btn-play animate-pulse">
+                    <i class="fa-solid fa-gamepad"></i> Iniciar Jogo
+                </button>
+                
+                <div class="sub-menu">
+                    <button id="btn-what-is" class="btn btn-info">
+                        <i class="fa-solid fa-circle-question"></i> O que é Carbonização?
+                    </button>
+                    <button id="btn-tips" class="btn btn-tips">
+                        <i class="fa-solid fa-lightbulb"></i> Dicas de Manejo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Painel Informativo Dinâmico (Escondido por padrão) -->
+            <div id="info-panel" class="modal-info hidden">
+                <h3 id="info-title">Título Informativo</h3>
+                <div id="info-content">Conteúdo informativo...</div>
+                <button id="btn-close-info" class="btn btn-close">Entendi! <i class="fa-solid fa-check"></i></button>
+            </div>
         </div>
 
         <!-- Tela Principal de Decisões -->

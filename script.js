@@ -66,6 +66,14 @@ const btnStart = document.getElementById('btn-start');
 const btnNext = document.getElementById('btn-next');
 const btnRestart = document.getElementById('btn-restart');
 
+// Novos Elementos da Tela Inicial Explicativa
+const btnWhatIs = document.getElementById('btn-what-is');
+const btnTips = document.getElementById('btn-tips');
+const btnCloseInfo = document.getElementById('btn-close-info');
+const infoPanel = document.getElementById('info-panel');
+const infoTitle = document.getElementById('info-title');
+const infoContent = document.getElementById('info-content');
+
 const txtCurrentRound = document.getElementById('current-round');
 const txtCarbonScore = document.getElementById('carbon-score');
 const txtScenTitle = document.getElementById('scenario-title');
@@ -77,12 +85,17 @@ const btnChoiceB = document.getElementById('choice-b');
 const feedbackBox = document.getElementById('feedback-box');
 const txtFeedback = document.getElementById('feedback-text');
 
-// Registro dos ouvintes de eventos (Cliques)
+// Ouvintes de eventos (Cliques)
 btnStart.addEventListener('click', iniciarJogo);
 btnChoiceA.addEventListener('click', () => fazerEscolha('A'));
 btnChoiceB.addEventListener('click', () => fazerEscolha('B'));
 btnNext.addEventListener('click', avancarRodada);
 btnRestart.addEventListener('click', reiniciarJogo);
+
+// Novos Ouvintes para Explicações Pedagógicas
+btnWhatIs.addEventListener('click', mostrarOQueE);
+btnTips.addEventListener('click', mostrarDicas);
+btnCloseInfo.addEventListener('click', () => infoPanel.classList.add('hidden'));
 
 function iniciarJogo() {
     startScreen.classList.add('hidden');
@@ -91,6 +104,29 @@ function iniciarJogo() {
     rodadaAtual = 0;
     totalCarbono = 0;
     carregarRodada();
+}
+
+// Funções para exibir os textos de ajuda na tela inicial
+function mostrarOQueE() {
+    infoPanel.classList.remove('hidden');
+    infoPanel.style.backgroundColor = "#e3f2fd";
+    infoPanel.style.borderColor = "#1e88e5";
+    infoTitle.innerHTML = "<i class='fa-solid fa-cloud-sun'></i> O que é Carbonização no Campo?";
+    infoContent.innerHTML = "<p>As plantas puxam o gás poluente do ar (CO₂) para crescer. Quando fazemos um manejo correto, esse carbono fica <strong>guardado dentro da terra</strong> e nas raízes! Se usarmos técnicas erradas, o solo se desgasta e solta toda a poluição de volta para a atmosfera, aquecendo o planeta.</p>";
+}
+
+function mostrarDicas() {
+    infoPanel.classList.remove('hidden');
+    infoPanel.style.backgroundColor = "#f3e5f5";
+    infoPanel.style.borderColor = "#8e24aa";
+    infoTitle.innerHTML = "<i class='fa-solid fa-lightbulb'></i> Dicas para Ganhar Pontos:";
+    infoContent.innerHTML = `
+        <ul>
+            <li>🌾 <strong>Evite revirar a terra:</strong> Prefira maquinários leves e o Plantio Direto.</li>
+            <li>🌳 <strong>Plante árvores:</strong> Elas dão sombra para as vacas e aspiram poluentes.</li>
+            <li>🌿 <strong>Nunca deixe o chão nulo:</strong> Plantas de cobertura mantêm o subsolo ativo e protegido!</li>
+        </ul>
+    `;
 }
 
 function carregarRodada() {
@@ -105,7 +141,6 @@ function carregarRodada() {
     txtScenTitle.innerText = dadosCenario.titulo;
     txtScenDesc.innerText = dadosCenario.desc;
     
-    // Altera dinamicamente o ícone central da pergunta
     iconScen.className = `fa-solid ${dadosCenario.icone}`;
 
     btnChoiceA.innerText = dadosCenario.opcoes.A.texto;
