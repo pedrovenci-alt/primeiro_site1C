@@ -195,8 +195,9 @@ function processarAcaoEspaco() {
             
             // Adiciona um bloco amarelo visual no topo do trator representando a carga física
             const blocoCargaGeo = new THREE.BoxGeometry(0.8, 0.4, 0.8);
-            const blocoCargaMat = new THREE.MeshStandardMaterial({ color: '#ffea00', name: 'carga' });
+            const blocoCargaMat = new THREE.MeshStandardMaterial({ color: '#ffea00' });
             const blocoCarga = new THREE.Mesh(blocoCargaGeo, blocoCargaMat);
+            blocoCarga.name = "blocoDeCarga"; // Tag identificadora corrigida
             blocoCarga.position.set(0, 2.2, -0.2);
             tratorMesh.add(blocoCarga);
         }
@@ -240,7 +241,3 @@ function atualizarFisica3D() {
             // Se colidir com o tronco, anula o movimento forçando a voltar para a coordenada anterior
             tratorMesh.position.x = antigaX;
             tratorMesh.position.z = antigaZ;
-            document.getElementById('log-text').innerText = "💥 Cuidado! Você bateu em uma árvore de Reflorestamento!";
-        }
-    }
-
