@@ -5,18 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fazenda AgroCarbono - Agrinho 2026</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome para os animais e plantas -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- Entrada Temática: Fazendinha Animada -->
     <div class="farm-background">
-        <!-- Nuvens no céu -->
         <div class="cloud cloud1"><i class="fa-solid fa-cloud"></i></div>
         <div class="cloud cloud2"><i class="fa-solid fa-cloud"></i></div>
 
-        <!-- Elementos do Cenário da Fazenda -->
         <div class="farm-scenery">
             <div class="farm-item tractor-anim"><i class="fa-solid fa-tractor"></i></div>
             <div class="farm-item cow-anim"><i class="fa-solid fa-cow"></i></div>
@@ -25,11 +21,9 @@
             <div class="farm-item plant-anim p3"><i class="fa-solid fa-seedling"></i></div>
         </div>
 
-        <!-- Cerca da Fazenda -->
         <div class="fence"></div>
     </div>
 
-    <!-- Cabeçalho -->
     <header>
         <div class="container header-flex">
             <div class="logo"><i class="fa-solid fa-wheat-awn"></i> Agro<span>Carbono</span></div>
@@ -37,10 +31,8 @@
         </div>
     </header>
 
-    <!-- Container do Jogo -->
     <main class="game-container">
         
-        <!-- Tela Inicial -->
         <div id="start-screen" class="screen">
             <div class="welcome-badge"><i class="fa-solid fa-farm"></i> MINHA FAZENDA VERDE</div>
             <h1>Desafio da Carbonização no Campo</h1>
@@ -48,9 +40,7 @@
             <button id="btn-start" class="btn btn-large animate-pulse">Entrar na Fazenda <i class="fa-solid fa-door-open"></i></button>
         </div>
 
-        <!-- Tela Principal do Jogo -->
         <div id="game-screen" class="screen hidden">
-            <!-- Painel de Pontuação -->
             <div class="scoreboard">
                 <div class="score-item">
                     <span class="label">🗓️ Estágio:</span>
@@ -62,27 +52,23 @@
                 </div>
             </div>
 
-            <!-- Caixa da Pergunta -->
             <div class="scenario-box">
                 <div class="scenario-icon"><i id="scen-icon" class="fa-solid fa-tractor"></i></div>
                 <h2 id="scenario-title">Carregando...</h2>
                 <p id="scenario-desc">Aguarde...</p>
             </div>
 
-            <!-- Botões de Decisão -->
             <div class="choices-container">
                 <button class="choice-btn" id="choice-a">Opção A</button>
                 <button class="choice-btn" id="choice-b">Opção B</button>
             </div>
             
-            <!-- Feedback -->
             <div id="feedback-box" class="feedback-box hidden">
                 <p id="feedback-text"></p>
                 <button id="btn-next" class="btn">Próximo Passo <i class="fa-solid fa-chevron-right"></i></button>
             </div>
         </div>
 
-        <!-- Tela de Fim de Jogo -->
         <div id="end-screen" class="screen hidden">
             <div class="trophy-container">
                 <i class="fa-solid fa-trophy giant-icon gold"></i>
