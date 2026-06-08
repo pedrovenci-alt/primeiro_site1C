@@ -1,11 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Agrinho 2026 - Carbonização no Campo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fa-solid fa-leaf"></i> Agrinho <span>2026</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#inicio">Início</a></li>
+                    <li><a href="#sobre">O Conceito</a></li>
+                    <li><a href="#praticas">Práticas Sustentáveis</a></li>
+                    <li><a href="#calculadora">Simulador</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="inicio" class="hero">
+        <div class="hero-content">
+            <h1>Carbonização no Campo</h1>
+            <p>Transformando a agricultura através da retenção de carbono e sustentabilidade no solo.</p>
+            <a href="#sobre" class="btn">Saiba Mais</a>
+        </div>
+    </section>
+
+    <section id="sobre" class="container section">
+        <h2>O que é a Carbonização no Campo?</h2>
+        <p class="subtitle">Entenda a importância de fixar o carbono no solo em vez de deixá-lo na atmosfera.</p>
+        <div class="grid-2">
+            <div class="card-info">
+                <h3><i class="fa-solid fa-earth-americas"></i> O Desafio Global</h3>
+                <p>O excesso de gases de efeito estufa acelera as mudanças climáticas. O campo não é apenas parte do problema, mas a principal **solução** através do sequestro de carbono.</p>
+            </div>
+            <div class="card-info">
+                <h3><i class="fa-solid fa-seedling"></i> O Solo como Esponja</h3>
+                <p>Técnicas corretas transformam a terra em um verdadeiro depósito de carbono, melhorando a fertilidade, retendo mais água e gerando créditos de carbono para o produtor.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="praticas" class="bg-light section">
+        <div class="container">
+            <h2>Práticas para o Agronegócio Sustentável</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <i class="fa-solid fa-tractor icon-main"></i>
+                    <h3>Plantio Direto</h3>
+                    <p>Evita o revolvimento do solo, mantendo a matéria orgânica e o carbono protegidos na terra.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-tree icon-main"></i>
+                    <h3>ILPF</h3>
+                    <p>Integração Lavoura-Pecuária-Floresta multiplica a captação de CO2 pelas árvores e pastagens.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-droplet icon-main"></i>
+                    <h3>Adubação Verde</h3>
+                    <p>Uso de plantas de cobertura que fixam nitrogênio e biomassa rica em carbono no solo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="calculadora" class="container section">
+        <h2>Simulador de Impacto Verde</h2>
+        <p class="subtitle">Descubra uma estimativa de quantas árvores equivalem ao carbono fixado na sua propriedade ideal.</p>
+        
+        <div class="form-container">
+            <div class="form-group">
+                <label for="hectares">Tamanho da Propriedade (em Hectares):</label>
+                <input type="number" id="hectares" placeholder="Ex: 50" min="1">
+            </div>
+            <button id="btn-calcular" class="btn">Calcular Impacto</button>
+            
+            <div id="resultado" class="hidden">
+                <h3><i class="fa-solid fa-star"></i> Resultado Estimado:</h3>
+                <p id="texto-resultado"></p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Projeto Agrinho - Carbonização no Campo. Desenvolvido com foco no futuro sustentável.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
