@@ -36,8 +36,15 @@ document.getElementById('btn-restart').addEventListener('click', () => location.
 
 // CONFIGURAÇÃO INICIAL E MONTAGEM DO MUNDO 3D
 function iniciarSimulador3D() {
+    // CORREÇÃO CRÍTICA: Primeiro exibe a tela do jogo para o contêiner ganhar tamanho no navegador
     startScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
+    
+    const container = document.getElementById('canvas3d-container');
+    
+    // Evita duplicar o canvas se o botão for clicado mais de uma vez
+    if (renderizador) return;
+
     jogoAtivo = true;
 
     // 1. Criando a Cena
@@ -45,12 +52,11 @@ function iniciarSimulador3D() {
     cena.background = new THREE.Color('#a0e0ff'); // Céu Azul claro
 
     // 2. Criando a Câmera Perspectiva (Visão de Cima/Isométrica)
-    const container = document.getElementById('canvas3d-container');
     camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(0, 20, 25);
     camera.lookAt(0, 0, 0);
 
-    // 3. Renderizador WebGL
+    // 3. Renderizador WebGL associado ao contêiner visível
     renderizador = new THREE.WebGLRenderer({ antialias: true });
     renderizador.setSize(container.clientWidth, container.clientHeight);
     renderizador.shadowMap.enabled = true;
@@ -89,7 +95,7 @@ function iniciarSimulador3D() {
     tratorMesh = tratorGrupo;
     cena.add(tratorMesh);
 
-    // 7. Construindo o Lote de Terra (Placa marrom rentes ao chão)
+    // 7. Construindo o Lote de Terra (Placa marrom rente ao chão)
     const loteGeo = new THREE.BoxGeometry(4, 0.1, 4);
     const loteMat = new THREE.MeshStandardMaterial({ color: '#795548' });
     loteMesh = new THREE.Mesh(loteGeo, loteMat);
@@ -190,7 +196,7 @@ function processarAcaoEspaco() {
             estagioPlanta = 'vazio';
             tratorCarregado = true;
             loteMesh.material.color.set('#795548'); // Volta para marrom
-            document.getElementById('hud-grains').innerText = "Grãos (1/1)";
+            document.getElementById('hud-grains').innerText = "Cheio";
             document.getElementById('log-text').innerText = "🚜 Colheita Concluída! Leve a carga até o Galpão Azul.";
             
             // Adiciona um bloco amarelo visual no topo do trator representando a carga física
@@ -237,7 +243,3 @@ function atualizarFisica3D() {
 
     // SISTEMA DE DETECÇÃO DE COLISÃO SÓLIDA CONTRA AS ÁRVORES
     for (let i = 0; i < obstaculos.length; i++) {
-        if (tratorBox.intersectsBox(obstaculos[i])) {
-            // Se colidir com o tronco, anula o movimento forçando a voltar para a coordenada anterior
-            tratorMesh.position.x = antigaX;
-            tratorMesh.position.z = antigaZ;
