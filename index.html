@@ -3,96 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agrinho 2026 - Carbonização no Campo</title>
+    <title>Desafio AgroCarbono - Agrinho 2026</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
+    <!-- Cabeçalho -->
     <header>
-        <div class="container">
-            <div class="logo">
-                <i class="fa-solid fa-leaf"></i> Agrinho <span>2026</span>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#inicio">Início</a></li>
-                    <li><a href="#sobre">O Conceito</a></li>
-                    <li><a href="#praticas">Práticas Sustentáveis</a></li>
-                    <li><a href="#calculadora">Simulador</a></li>
-                </ul>
-            </nav>
+        <div class="container header-flex">
+            <div class="logo"><i class="fa-solid fa-gamepad"></i> Agro<span>Carbono</span></div>
+            <div class="badge">Agrinho 2026</div>
         </div>
     </header>
 
-    <section id="inicio" class="hero">
-        <div class="hero-content">
-            <h1>Carbonização no Campo</h1>
-            <p>Transformando a agricultura através da retenção de carbono e sustentabilidade no solo.</p>
-            <a href="#sobre" class="btn">Saiba Mais</a>
-        </div>
-    </section>
-
-    <section id="sobre" class="container section">
-        <h2>O que é a Carbonização no Campo?</h2>
-        <p class="subtitle">Entenda a importância de fixar o carbono no solo em vez de deixá-lo na atmosfera.</p>
-        <div class="grid-2">
-            <div class="card-info">
-                <h3><i class="fa-solid fa-earth-americas"></i> O Desafio Global</h3>
-                <p>O excesso de gases de efeito estufa acelera as mudanças climáticas. O campo não é apenas parte do problema, mas a principal **solução** através do sequestro de carbono.</p>
-            </div>
-            <div class="card-info">
-                <h3><i class="fa-solid fa-seedling"></i> O Solo como Esponja</h3>
-                <p>Técnicas corretas transformam a terra em um verdadeiro depósito de carbono, melhorando a fertilidade, retendo mais água e gerando créditos de carbono para o produtor.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="praticas" class="bg-light section">
-        <div class="container">
-            <h2>Práticas para o Agronegócio Sustentável</h2>
-            <div class="grid-3">
-                <div class="card">
-                    <i class="fa-solid fa-tractor icon-main"></i>
-                    <h3>Plantio Direto</h3>
-                    <p>Evita o revolvimento do solo, mantendo a matéria orgânica e o carbono protegidos na terra.</p>
-                </div>
-                <div class="card">
-                    <i class="fa-solid fa-tree icon-main"></i>
-                    <h3>ILPF</h3>
-                    <p>Integração Lavoura-Pecuária-Floresta multiplica a captação de CO2 pelas árvores e pastagens.</p>
-                </div>
-                <div class="card">
-                    <i class="fa-solid fa-droplet icon-main"></i>
-                    <h3>Adubação Verde</h3>
-                    <p>Uso de plantas de cobertura que fixam nitrogênio e biomassa rica em carbono no solo.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="calculadora" class="container section">
-        <h2>Simulador de Impacto Verde</h2>
-        <p class="subtitle">Descubra uma estimativa de quantas árvores equivalem ao carbono fixado na sua propriedade ideal.</p>
+    <!-- Tela Inicial do Jogo -->
+    <main class="game-container">
         
-        <div class="form-container">
-            <div class="form-group">
-                <label for="hectares">Tamanho da Propriedade (em Hectares):</label>
-                <input type="number" id="hectares" placeholder="Ex: 50" min="1">
+        <!-- Tela de Boas-Vindas -->
+        <div id="start-screen" class="screen">
+            <i class="fa-solid fa-leaf giant-icon"></i>
+            <h1>Desafio da Carbonização no Campo</h1>
+            <p>Você acabou de assumir o comando de uma fazenda! Sua missão é adotar as melhores práticas agrícolas para fixar o carbono no solo, combater o efeito estufa e tornar sua propriedade altamente sustentável.</p>
+            <button id="btn-start" class="btn btn-large">Iniciar Desafio <i class="fa-solid fa-play"></i></button>
+        </div>
+
+        <!-- Tela Principal do Jogo (Oculta no início) -->
+        <div id="game-screen" class="screen hidden">
+            <!-- Painel de Pontuação -->
+            <div class="scoreboard">
+                <div class="score-item">
+                    <span class="label">Rodada:</span>
+                    <span id="current-round" class="val">1/3</span>
+                </div>
+                <div class="score-item">
+                    <span class="label"><i class="fa-solid fa-cloud"></i> CO₂ Retido:</span>
+                    <span id="carbon-score" class="val">0 t</span>
+                </div>
             </div>
-            <button id="btn-calcular" class="btn">Calcular Impacto</button>
+
+            <!-- Caixa da Pergunta/Cenário -->
+            <div class="scenario-box">
+                <div class="scenario-icon"><i id="scen-icon" class="fa-solid fa-tractor"></i></div>
+                <h2 id="scenario-title">Cenário 1</h2>
+                <p id="scenario-desc">Carregando desafio...</p>
+            </div>
+
+            <!-- Botões de Decisão -->
+            <div class="choices-container">
+                <button class="choice-btn" data-choice="A" id="choice-a">Opção A</button>
+                <button class="choice-btn" data-choice="B" id="choice-b">Opção B</button>
+            </div>
             
-            <div id="resultado" class="hidden">
-                <h3><i class="fa-solid fa-star"></i> Resultado Estimado:</h3>
-                <p id="texto-resultado"></p>
+            <!-- Feedback da Escolha -->
+            <div id="feedback-box" class="feedback-box hidden">
+                <p id="feedback-text"></p>
+                <button id="btn-next" class="btn">Continuar <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
-    </section>
+
+        <!-- Tela de Fim de Jogo (Oculta no início) -->
+        <div id="end-screen" class="screen hidden">
+            <i class="fa-solid fa-trophy giant-icon gold"></i>
+            <h2>Fim de Jogo!</h2>
+            <p class="final-score-text">Sua fazenda conseguiu reter um total de:</p>
+            <div class="final-score"><span id="total-carbon">0</span> toneladas de CO₂!</div>
+            
+            <p id="rank-message">Avaliando seu desempenho...</p>
+            
+            <button id="btn-restart" class="btn"><i class="fa-solid fa-rotate-left"></i> Jogar Novamente</button>
+        </div>
+
+    </main>
 
     <footer>
-        <div class="container">
-            <p>&copy; 2026 Projeto Agrinho - Carbonização no Campo. Desenvolvido com foco no futuro sustentável.</p>
-        </div>
+        <p>&copy; 2026 Projeto Agrinho - Jogo da Carbonização no Campo.</p>
     </footer>
 
     <script src="script.js"></script>
