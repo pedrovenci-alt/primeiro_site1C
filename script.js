@@ -1,242 +1,206 @@
-// VARIÁVEIS DE ESTADO DO SIMULADOR (FARMING ENGINE)
-let dinheiro = 500;
-let graosEstoque = 0;
+// CONFIGURAÇÕES DO MOTOR GRÁFICO (CANVAS 2D)
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// Estados Globais
 let carbonoRetido = 0;
+let tratorCarregado = false; // Se coletou os grãos e precisa levar pro galpão
 
-let temBiocombustivel = false;
-let ajudantesContratados = 0;
-let arvoresAgrofloresta = 0;
+// Configuração do Trator (Jogador)
+const trator = {
+    x: 100,
+    y: 200,
+    width: 32,
+    height: 32,
+    speed: 4,
+    color: '#d32f2f' // Vermelho Maquinário
+};
 
-let estagioCampo = "vazio"; // vazio -> plantado -> crescendo -> pronto
-let progressoCrescimento = 0;
-let loopCrescimento = null;
+// Configuração do Lote de Terra
+const loteTerra = {
+    x: 350,
+    y: 150,
+    width: 80,
+    height: 80,
+    status: 'vazio', // vazio -> plantado -> pronto
+    progresso: 0
+};
 
-// Capturando Elementos da Interface
+// Configuração do Galpão de Descarga (Cooperativa)
+const galpao = {
+    x: 40,
+    y: 20,
+    width: 90,
+    height: 65
+};
+
+// Captura de Teclado
+const keys = {};
+window.addEventListener('keydown', e => keys[e.key] = true);
+window.addEventListener('keyup', e => keys[e.key] = false);
+
+// Ouvintes de Telas
 const startScreen = document.getElementById('start-screen');
 const gameScreen = document.getElementById('game-screen');
 const endScreen = document.getElementById('end-screen');
 
-// Componentes do HUD
-const hudMoney = document.getElementById('hud-money');
-const hudGrains = document.getElementById('hud-grains');
-const hudCo2 = document.getElementById('hud-co2');
-const fieldStatusText = document.getElementById('field-text-status');
-const cropProgressBar = document.getElementById('crop-progress-bar');
-const logText = document.getElementById('log-text');
-
-// Botões Operacionais
-const btnPlant = document.getElementById('btn-plant');
-const btnHarvest = document.getElementById('btn-harvest');
-const btnSell = document.getElementById('btn-sell');
-
-// Botões de Loja/Upgrade
-const btnBuyBiofuel = document.getElementById('btn-buy-biofuel');
-const btnBuyFarmer = document.getElementById('btn-buy-farmer');
-const btnBuyTrees = document.getElementById('btn-buy-trees');
-
-// Elementos Visuais do Cenário de Fundo
-const animTruck = document.getElementById('anim-truck');
-const animHarvester = document.getElementById('anim-harvester');
-const animFarmer1 = document.getElementById('anim-farmer1');
-const animFarmer2 = document.getElementById('anim-farmer2');
-
-// Ouvintes de Telas Informativas (Manual)
-document.getElementById('btn-what-is').addEventListener('click', () => abrirPainelInfo(1));
-document.getElementById('btn-tips').addEventListener('click', () => abrirPainelInfo(2));
+document.getElementById('btn-start').addEventListener('click', iniciarMotorJogo);
+document.getElementById('btn-what-is').addEventListener('click', () => document.getElementById('info-panel').classList.remove('hidden'));
 document.getElementById('btn-close-info').addEventListener('click', () => document.getElementById('info-panel').classList.add('hidden'));
+document.getElementById('btn-finish-sim').addEventListener('click', encerrarTurno);
+document.getElementById('btn-restart').addEventListener('click', () => location.reload());
 
-// Ouvintes de Ação do Jogo
-document.getElementById('btn-start').addEventListener('click', ligarSimulador);
-btnPlant.addEventListener('click', executarSemeadura);
-btnHarvest.addEventListener('click', executarColheita);
-btnSell.addEventListener('click', executarEscoamento);
-
-// Ouvintes de Compra de Melhorias
-btnBuyBiofuel.addEventListener('click', adquirirBiocombustivel);
-btnBuyFarmer.addEventListener('click', adquirirAjudante);
-btnBuyTrees.addEventListener('click', adquirirAgrofloresta);
-document.getElementById('btn-finish-sim').addEventListener('click', finalizarSimulador);
-document.getElementById('btn-restart').addEventListener('click', () => { location.reload(); });
-
-// INICIALIZADOR DO SIMULADOR
-function ligarSimulador() {
+function iniciarMotorJogo() {
     startScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
-    atualizarPainelHUD();
     
-    // Geração passiva de carbono por Agrofloresta (Ciclo Automático)
+    // Inicia o Loop Principal do Jogo (Roda a 60 frames por segundo)
+    requestAnimationFrame(loopJogo);
+
+    // Ciclo de Crescimento automático da Plantação
     setInterval(() => {
-        if(arvoresAgrofloresta > 0) {
-            carbonoRetido += arvoresAgrofloresta * 2;
-            atualizarPainelHUD();
+        if (loteTerra.status === 'plantado') {
+            loteTerra.progresso += 10;
+            if (loteTerra.progresso >= 100) {
+                loteTerra.status = 'pronto';
+                document.getElementById('log-text').innerText = "🌾 O milho está maduro! Dirija até lá e aperte ESPAÇO para colher!";
+            }
         }
-    }, 3000);
+    }, 500);
 }
 
-// LOG DE EVENTOS
-function registrarLog(mensagem) {
-    logText.innerText = "🚜 " + mensagem;
-}
+// CAPTURA A TECLA ESPAÇO PARA INTERAÇÃO
+window.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        verificarInteracao();
+    }
+});
 
-// ATUALIZAÇÃO HUD
-function atualizarPainelHUD() {
-    hudMoney.innerText = `R$ ${dinheiro}`;
-    hudGrains.innerText = `${graosEstoque} kg`;
-    hudCo2.innerText = `${carbonoRetido} t`;
+// FISICA DE MOVIMENTAÇÃO DO TRATOR
+function atualizarFisica() {
+    // Mover para Esquerda
+    if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
+        trator.x -= trator.speed;
+        if (trator.x < 0) trator.x = 0;
+    }
+    // Mover para Direita
+    if (keys['ArrowRight'] || keys['d'] || keys['D']) {
+        trator.x += trator.speed;
+        if (trator.x > canvas.width - trator.width) trator.x = canvas.width - trator.width;
+    }
+    // Mover para Cima
+    if (keys['ArrowUp'] || keys['w'] || keys['W']) {
+        trator.y -= trator.speed;
+        if (trator.y < 0) trator.y = 0;
+    }
+    // Mover para Baixo
+    if (keys['ArrowDown'] || keys['s'] || keys['S']) {
+        trator.y += trator.speed;
+        if (trator.y > canvas.height - trator.height) trator.y = canvas.height - trator.height;
+    }
 
-    // Atualiza travas dos botões de compra baseados em dinheiro
-    btnBuyBiofuel.disabled = temBiocombustivel || dinheiro < 200;
-    btnBuyFarmer.disabled = ajudantesContratados >= 2 || dinheiro < 300;
-    btnBuyTrees.disabled = dinheiro < 150;
-}
-
-// MECÂNICA 1: SEMEADURA (PLANTAR)
-function executarSemeadura() {
-    if (estagioCampo !== "vazio") return;
-
-    estagioCampo = "crescendo";
-    btnPlant.disabled = true;
-    fieldStatusText.innerText = "🌱 As sementes estão germinando no subsolo...";
-    registrarLog("Semeadoras em campo. Plantio Direto ativado para proteger o solo!");
-
-    progressoCrescimento = 0;
-    loopCrescimento = setInterval(() => {
-        progressoCrescimento += 10;
-        cropProgressBar.style.width = progressoCrescimento + "%";
-
-        if (progressoCrescimento >= 100) {
-            clearInterval(loopCrescimento);
-            estagioCampo = "pronto";
-            fieldStatusText.innerText = "🌾 O milho cresceu e está pronto para colheita!";
-            btnHarvest.disabled = false;
-            registrarLog("Plantação madura! Ligue a colheitadeira.");
-        }
-    }, 400);
-}
-
-// MECÂNICA 2: COLHEITA
-function executarColheita() {
-    if (estagioCampo !== "pronto") return;
-
-    animHarvester.classList.remove('hidden'); // Ativa animação 2D
-    btnHarvest.disabled = true;
-    
-    setTimeout(() => {
-        animHarvester.classList.add('hidden');
-        estagioCampo = "vazio";
-        graosEstoque += 500;
-        
-        // Penalidade Ecológica ou Bônus por Combustível
-        if (temBiocombustivel) {
-            carbonoRetido += 40;
-            registrarLog("Colheita concluída com Biocombustível! +40t de CO₂ retidos.");
-        } else {
-            carbonoRetido += 10;
-            registrarLog("Colheita feita com Diesel comum. Emissão alta de poluentes.");
-        }
-
-        cropProgressBar.style.width = "0%";
-        fieldStatusText.innerText = "🪵 Solo vazio. Pronto para nova rotação de culturas.";
-        btnSell.disabled = false;
-        btnPlant.disabled = false;
-        atualizarPainelHUD();
-
-        // Automação: Se tiver ajudante, ele planta de novo sozinho!
-        if(ajudantesContratados > 0) {
-            setTimeout(executarSemeadura, 1000);
-        }
-    }, 2000);
-}
-
-// MECÂNICA 3: ESCOAMENTO (VENDER GRÃOS)
-function executarEscoamento() {
-    if (graosEstoque <= 0) return;
-
-    animTruck.classList.remove('hidden'); // Ativa caminhão na rodovia
-    btnSell.disabled = true;
-
-    setTimeout(() => {
-        animTruck.classList.add('hidden');
-        let lucro = (graosEstoque / 500) * 350;
-        dinheiro += lucro;
-        graosEstoque = 0;
-
-        registrarLog(`Safra vendida na Cooperativa! Faturamento de R$ ${lucro}.`);
-        atualizarPainelHUD();
-    }, 2000);
-}
-
-// UPGRADES DA LOJA
-function adquirirBiocombustivel() {
-    if(dinheiro >= 200 && !temBiocombustivel) {
-        dinheiro -= 200;
-        temBiocombustivel = true;
-        registrarLog("Maquinários adaptados para Biodiesel. Menos fumaça no céu!");
-        atualizarPainelHUD();
+    // Verifica se o trator carregado entrou no galpão para entregar os grãos
+    if (tratorCarregado && checarColisao(trator, galpao)) {
+        tratorCarregado = false;
+        carbonoRetido += 50;
+        document.getElementById('hud-co2').innerText = `${carbonoRetido} t`;
+        document.getElementById('hud-grains').innerText = "0/1";
+        document.getElementById('log-text').innerText = "🚚 Grãos entregues! +50t de Carbono retidos com sucesso no subsolo!";
     }
 }
 
-function adquirirAjudante() {
-    if(dinheiro >= 300 && ajudantesContratados < 2) {
-        dinheiro -= 300;
-        ajudantesContratados++;
-        if(ajudantesContratados === 1) animFarmer1.classList.remove('hidden');
-        if(ajudantesContratados === 2) animFarmer2.classList.remove('hidden');
+// DETECTOR DE SENSOR DE COLISÃO
+function checarColisao(obj1, obj2) {
+    return obj1.x < obj2.x + obj2.width &&
+           obj1.x + obj1.width > obj2.x &&
+           obj1.y < obj2.y + obj2.height &&
+           obj1.y + obj1.height > obj2.y;
+}
 
-        registrarLog("Novo colono contratado! Ele fará o plantio automático.");
-        atualizarPainelHUD();
-        if(estagioCampo === "vazio") executarSemeadura();
+// AÇÃO AO APERTAR ESPAÇO
+function verificarInteracao() {
+    if (checarColisao(trator, loteTerra)) {
+        if (loteTerra.status === 'vazio' && !tratorCarregado) {
+            loteTerra.status = 'plantado';
+            loteTerra.progresso = 0;
+            document.getElementById('log-text').innerText = "🌱 Sementes plantadas! Aguarde o crescimento.";
+        } else if (loteTerra.status === 'pronto' && !tratorCarregado) {
+            loteTerra.status = 'vazio';
+            tratorCarregado = true;
+            document.getElementById('hud-grains').innerText = "1/1 (Cheio)";
+            document.getElementById('log-text').innerText = "🌾 Colheita feita! Pilote até o Galpão Azul no topo esquerdo para descarregar!";
+        }
     }
 }
 
-function adquirirAgrofloresta() {
-    if(dinheiro >= 150) {
-        dinheiro -= 150;
-        arvoresAgrofloresta++;
-        carbonoRetido += 20; // Bônus imediato
-        registrarLog(`Linha de árvores plantada! Sequestro passivo de CO₂ ativado.`);
-        atualizarPainelHUD();
-    }
-}
+// RENDERIZADOR GRÁFICO (DESENHO DOS ELEMENTOS NA TELA)
+function desenharCenario() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-// INSTRUÇÕES PEDAGÓGICAS
-function abrirPainelInfo(tipo) {
-    const panel = document.getElementById('info-panel');
-    const title = document.getElementById('info-title');
-    const content = document.getElementById('info-content');
-    panel.classList.remove('hidden');
+    // 1. Desenhar Galpão (Cooperativa)
+    ctx.fillStyle = '#1565c0'; // Azul
+    ctx.fillRect(galpao.x, galpao.y, galpao.width, galpao.height);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('🚚 GALPÃO', galpao.x + 15, galpao.y + 35);
 
-    if(tipo === 1) {
-        title.innerHTML = "<i class='fa-solid fa-leaf'></i> Ciclo do Carbono Prático";
-        content.innerHTML = "<p>O trator a diesel comum emite fumaça poluente. Ao comprar o <strong>Biocombustível</strong> ou plantar <strong>Árvores (Agrofloresta)</strong>, sua fazenda compensa as emissões das colheitadeiras e estoca o carbono no solo.</p>";
+    // 2. Desenhar Lote de Terra
+    if (loteTerra.status === 'vazio') {
+        ctx.fillStyle = '#795548'; // Marrom Terra
+    } else if (loteTerra.status === 'plantado') {
+        ctx.fillStyle = '#a1887f'; // Marrom claro com brotos
     } else {
-        title.innerHTML = "<i class='fa-solid fa-book'></i> Estratégia de Lucro Sustentável";
-        content.innerHTML = "<p>1. Clique em <strong>Plantar</strong> e aguarde a barra encher.<br>2. Use a <strong>Colheitadeira</strong> para gerar Grãos em estoque.<br>3. Envie o <strong>Caminhão</strong> para faturar dinheiro e reinvestir em automações ecológicas!</p>";
+        ctx.fillStyle = '#ffb300'; // Amarelo Milho Maduro
+    }
+    ctx.fillRect(loteTerra.x, loteTerra.y, loteTerra.width, loteTerra.height);
+    
+    // Texto descritivo da terra
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '12px sans-serif';
+    if(loteTerra.status === 'plantado') {
+        ctx.fillText(`Crescendo: ${loteTerra.progresso}%`, loteTerra.x + 5, loteTerra.y + 45);
+    } else {
+        ctx.fillText(loteTerra.status.toUpperCase(), loteTerra.x + 15, loteTerra.y + 45);
+    }
+
+    // 3. Desenhar o Trator (Jogador)
+    ctx.fillStyle = trator.color;
+    ctx.fillRect(trator.x, trator.y, trator.width, trator.height);
+    
+    // Desenhar pequenas rodas pretas no trator para dar identidade visual 2D
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(trator.x - 2, trator.y + 4, 4, 8);
+    ctx.fillRect(trator.x + trator.width - 2, trator.y + 4, 4, 8);
+    ctx.fillRect(trator.x - 2, trator.y + 20, 4, 8);
+    ctx.fillRect(trator.x + trator.width - 2, trator.y + 20, 4, 8);
+
+    // Detalhe de carga se estiver carregado
+    if(tratorCarregado) {
+        ctx.fillStyle = '#ffea00';
+        ctx.fillRect(trator.x + 8, trator.y + 8, 16, 16);
     }
 }
 
-// TELA FINAL: AUDITORIA
-function finalizarSimulador() {
-    if(loopCrescimento) clearInterval(loopCrescimento);
+// LOOP INFINITO DE CORRIDA 2D
+function loopJogo() {
+    atualizarFisica();
+    desenharCenario();
+    requestAnimationFrame(loopJogo);
+}
+
+// SISTEMA DE AUDITORIA FINAL
+function encerrarTurno() {
     gameScreen.classList.add('hidden');
     endScreen.classList.remove('hidden');
-
     document.getElementById('res-co2').innerText = carbonoRetido;
-    document.getElementById('res-money').innerText = dinheiro;
-    document.getElementById('res-grains').innerText = carbonoRetido * 12; // Estimativa de produção total
 
     const txtRank = document.getElementById('rank-message');
-    const icon = document.getElementById('end-icon');
-
     if (carbonoRetido >= 150) {
-        icon.className = "fa-solid fa-medal giant-icon gold";
-        txtRank.innerHTML = "🏆 <strong>Fazenda de Elite Agrinho 2026!</strong><br>Incrível! Você automatizou sua propriedade e mitigou as emissões dos caminhões com eficiência máxima. O campo prosperou 100% verde!";
-    } else if (carbonoRetido >= 60) {
-        icon.className = "fa-solid fa-wheat-awn giant-icon";
-        txtRank.innerHTML = "🌱 <strong>Produtor Consciente!</strong><br>Ótimo gerenciamento! Suas colheitas renderam lucros, mas lembre-se de comprar mais árvores e biocombustível para limpar o escapamento dos caminhões.";
+        txtRank.innerHTML = "🏆 <strong>Piloto Nota 10 - Agrinho!</strong><br>Excelente pilotagem! Você dominou o circuito rural, evitou emissões desnecessárias e recolheu toneladas de carbono puro de forma sustentável!";
+    } else if (carbonoRetido >= 50) {
+        txtRank.innerHTML = "🌱 <strong>Operador Regular!</strong><br>Bom trabalho ao volante. Conseguiu realizar entregas na cooperativa, mas pilote com mais agilidade no próximo ano agrícola para faturar mais!";
     } else {
-        icon.className = "fa-solid fa-triangle-exclamation giant-icon";
-        txtRank.innerHTML = "⚠️ <strong>Propriedade Multada por Emissões!</strong><br>A colheita pesada liberou mais gases do que o solo conseguiu reter. Tente jogar novamente investindo cedo em reflorestamento e combustíveis limpos!";
+        txtRank.innerHTML = "⚠️ <strong>Manejo Lento!</strong><br>O trator ficou parado ou faltou descarregar os grãos no galpão azul. Jogue novamente para dominar o teclado e ajudar a ecofazenda!";
     }
 }
-
