@@ -5,16 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fazenda AgroCarbono - Agrinho 2026</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome atualizado para suportar os novos ícones rurais -->
+    <link rel="stylesheet" href="https://cloudflare.com">
 </head>
 <body>
 
+    <!-- Cenário Dinâmico 2D de Fundo -->
     <div class="farm-background">
         <div class="cloud cloud1"><i class="fa-solid fa-cloud"></i></div>
         <div class="cloud cloud2"><i class="fa-solid fa-cloud"></i></div>
 
         <div class="farm-scenery">
-            <div class="farm-item tractor-anim"><i class="fa-solid fa-tractor"></i></div>
+            <!-- Caminhão na estrada e Colheitadeira no campo -->
+            <div class="farm-item truck-anim"><i class="fa-solid fa-truck-field"></i></div>
+            <div class="farm-item harvester-anim"><i class="fa-solid fa-tractor"></i></div>
+
+            <!-- Personagens Trabalhadores Humanos 2D -->
+            <div class="farm-item farmer-1"><i class="fa-solid fa-user-farmer"></i></div>
+            <div class="farm-item farmer-2"><i class="fa-solid fa-user-wheat"></i></div>
+
+            <!-- Animais e Plantações em crescimento -->
             <div class="farm-item cow-anim"><i class="fa-solid fa-cow"></i></div>
             <div class="farm-item plant-anim p1"><i class="fa-solid fa-seedling"></i></div>
             <div class="farm-item plant-anim p2"><i class="fa-solid fa-wheat-awn"></i></div>
@@ -24,6 +34,7 @@
         <div class="fence"></div>
     </div>
 
+    <!-- Barra Superior -->
     <header>
         <div class="container header-flex">
             <div class="logo"><i class="fa-solid fa-wheat-awn"></i> Agro<span>Carbono</span></div>
@@ -31,15 +42,18 @@
         </div>
     </header>
 
+    <!-- Painel Central do Jogo -->
     <main class="game-container">
         
+        <!-- Tela Inicial -->
         <div id="start-screen" class="screen">
             <div class="welcome-badge"><i class="fa-solid fa-farm"></i> MINHA FAZENDA VERDE</div>
             <h1>Desafio da Carbonização no Campo</h1>
-            <p>Ajude os animais e cuide das plantações! Tome as decisões certas para segurar o carbono no solo e não deixar os gases poluírem o céu da nossa fazendinha.</p>
+            <p>Ajude os nossos fazendeiros, cuide dos animais e opere o maquinário! Tome as decisões certas para segurar o carbono no solo e manter o céu azul na nossa fazendinha.</p>
             <button id="btn-start" class="btn btn-large animate-pulse">Entrar na Fazenda <i class="fa-solid fa-door-open"></i></button>
         </div>
 
+        <!-- Tela Principal de Decisões -->
         <div id="game-screen" class="screen hidden">
             <div class="scoreboard">
                 <div class="score-item">
@@ -69,6 +83,7 @@
             </div>
         </div>
 
+        <!-- Tela de Pontuação Final -->
         <div id="end-screen" class="screen hidden">
             <div class="trophy-container">
                 <i class="fa-solid fa-trophy giant-icon gold"></i>
