@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fazenda AgroCarbono - Agrinho 2026</title>
+    <title>Farming Simulator - AgroCarbono 2026</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cloudflare.com">
 </head>
@@ -13,110 +13,124 @@
     <div class="farm-background">
         <div class="cloud cloud1"><i class="fa-solid fa-cloud"></i></div>
         <div class="cloud cloud2"><i class="fa-solid fa-cloud"></i></div>
-
         <div class="farm-scenery">
-            <div class="farm-item truck-anim"><i class="fa-solid fa-truck-field"></i></div>
-            <div class="farm-item harvester-anim"><i class="fa-solid fa-tractor"></i></div>
-            <div class="farm-item farmer-1"><i class="fa-solid fa-user-farmer"></i></div>
-            <div class="farm-item farmer-2"><i class="fa-solid fa-user-wheat"></i></div>
+            <div id="anim-truck" class="farm-item truck-anim hidden"><i class="fa-solid fa-truck-field"></i></div>
+            <div id="anim-harvester" class="farm-item harvester-anim hidden"><i class="fa-solid fa-tractor"></i></div>
+            <div id="anim-farmer1" class="farm-item farmer-1 hidden"><i class="fa-solid fa-user-farmer"></i></div>
+            <div id="anim-farmer2" class="farm-item farmer-2 hidden"><i class="fa-solid fa-user-wheat"></i></div>
             <div class="farm-item cow-anim"><i class="fa-solid fa-cow"></i></div>
-            <div class="farm-item plant-anim p1"><i class="fa-solid fa-seedling"></i></div>
-            <div class="farm-item plant-anim p2"><i class="fa-solid fa-wheat-awn"></i></div>
-            <div class="farm-item plant-anim p3"><i class="fa-solid fa-seedling"></i></div>
         </div>
-
         <div class="fence"></div>
     </div>
 
-    <!-- Barra Superior -->
+    <!-- Barra Superior (HUD) -->
     <header>
         <div class="container header-flex">
-            <div class="logo"><i class="fa-solid fa-wheat-awn"></i> Agro<span>Carbono</span></div>
-            <div class="badge">Agrinho 2026</div>
+            <div class="logo"><i class="fa-solid fa-wheat-awn"></i> Farming<span>Carbono</span></div>
+            <div class="badge">Simulador Agrinho 2026</div>
         </div>
     </header>
 
-    <!-- Painel Central do Jogo -->
+    <!-- Painel Central do Simulador -->
     <main class="game-container">
         
-        <!-- NOVA TELA INICIAL INTERATIVA -->
+        <!-- 1. TELA INICIAL INTERATIVA -->
         <div id="start-screen" class="screen">
-            <div class="welcome-badge"><i class="fa-solid fa-farm"></i> PAINEL DE CONTROLE RURAL</div>
-            <h1>Desafio da Carbonização no Campo</h1>
-            <p>Monitore o maquinário, ajude os fazendeiros e tome decisões ecológicas para reter o carbono na terra!</p>
+            <div class="welcome-badge"><i class="fa-solid fa-gauge-high"></i> SIMULADOR REALISTA</div>
+            <h1>Farming Simulator: Carbono Zero</h1>
+            <p>Gerencie sua fazenda em tempo real! Opere colheitadeiras, contrate colonos e compre biocombustível para bater as metas de produção sem poluir a atmosfera.</p>
             
-            <!-- Menu de Botões da Tela Inicial -->
             <div class="menu-container">
                 <button id="btn-start" class="btn btn-large btn-play animate-pulse">
-                    <i class="fa-solid fa-gamepad"></i> Iniciar Jogo
+                    <i class="fa-solid fa-tractor"></i> Iniciar Painel da Fazenda
                 </button>
-                
                 <div class="sub-menu">
                     <button id="btn-what-is" class="btn btn-info">
                         <i class="fa-solid fa-circle-question"></i> O que é Carbonização?
                     </button>
                     <button id="btn-tips" class="btn btn-tips">
-                        <i class="fa-solid fa-lightbulb"></i> Dicas de Manejo
+                        <i class="fa-solid fa-lightbulb"></i> Manual do Produtor
                     </button>
                 </div>
             </div>
 
-            <!-- Painel Informativo Dinâmico (Escondido por padrão) -->
             <div id="info-panel" class="modal-info hidden">
-                <h3 id="info-title">Título Informativo</h3>
-                <div id="info-content">Conteúdo informativo...</div>
+                <h3 id="info-title">Título</h3>
+                <div id="info-content">Conteúdo...</div>
                 <button id="btn-close-info" class="btn btn-close">Entendi! <i class="fa-solid fa-check"></i></button>
             </div>
         </div>
 
-        <!-- Tela Principal de Decisões -->
+        <!-- 2. TELA DO SIMULADOR ATIVO -->
         <div id="game-screen" class="screen hidden">
-            <div class="scoreboard">
-                <div class="score-item">
-                    <span class="label">🗓️ Estágio:</span>
-                    <span id="current-round" class="val">1/3</span>
-                </div>
-                <div class="score-item">
-                    <span class="label">☁️ CO₂ Retido:</span>
-                    <span id="carbon-score" class="val">0 t</span>
-                </div>
-            </div>
-
-            <div class="scenario-box">
-                <div class="scenario-icon"><i id="scen-icon" class="fa-solid fa-tractor"></i></div>
-                <h2 id="scenario-title">Carregando...</h2>
-                <p id="scenario-desc">Aguarde...</p>
-            </div>
-
-            <div class="choices-container">
-                <button class="choice-btn" id="choice-a">Opção A</button>
-                <button class="choice-btn" id="choice-b">Opção B</button>
-            </div>
             
-            <div id="feedback-box" class="feedback-box hidden">
-                <p id="feedback-text"></p>
-                <button id="btn-next" class="btn">Próximo Passo <i class="fa-solid fa-chevron-right"></i></button>
+            <!-- Painel de Recursos -->
+            <div class="simulator-hud">
+                <div class="hud-item money"><i class="fa-solid fa-money-bill-wave"></i> Caixa: <span id="hud-money">R$ 500</span></div>
+                <div class="hud-item grains"><i class="fa-solid fa-wheat-awn"></i> Grãos: <span id="hud-grains">0 kg</span></div>
+                <div class="hud-item co2"><i class="fa-solid fa-cloud-arrow-down"></i> CO₂ Retido: <span id="hud-co2">0 t</span></div>
             </div>
+
+            <!-- Zona de Plantação (Lote de Terra Central) -->
+            <div class="field-zone">
+                <div class="field-status">
+                    <h3>🌾 Campo de Cultivo Atual</h3>
+                    <p id="field-text-status">Pronto para a semeadura!</p>
+                </div>
+                <div class="progress-container">
+                    <div id="crop-progress-bar" class="progress-bar"></div>
+                </div>
+            </div>
+
+            <!-- Grade de Comandos e Maquinários -->
+            <div class="actions-grid">
+                
+                <!-- Painel de Operações Mecânicas -->
+                <div class="action-card">
+                    <h4><i class="fa-solid fa-gears"></i> Maquinários</h4>
+                    <button id="btn-plant" class="btn-action"><i class="fa-solid fa-seedling"></i> Plantar Sementes</button>
+                    <button id="btn-harvest" class="btn-action" disabled><i class="fa-solid fa-tractor"></i> Ativar Colheitadeira</button>
+                    <button id="btn-sell" class="btn-action" disabled><i class="fa-solid fa-truck-ramp-box"></i> Caminhão: Escoar Safra</button>
+                </div>
+
+                <!-- Painel de Upgrades Sustentáveis (Loja) -->
+                <div class="action-card">
+                    <h4><i class="fa-solid fa-shop"></i> Melhorias Ecológicas</h4>
+                    <button id="btn-buy-biofuel" class="btn-upgrade"><i class="fa-solid fa-gas-pump"></i> Biocombustível (R$ 200)<br><small>Reduz emissões das máquinas</small></button>
+                    <button id="btn-buy-farmer" class="btn-upgrade"><i class="fa-solid fa-user-plus"></i> Contratar Ajudante (R$ 300)<br><small>Planta automaticamente</small></button>
+                    <button id="btn-buy-trees" class="btn-upgrade"><i class="fa-solid fa-tree"></i> Plantar Agrofloresta (R$ 150)<br><small>Retém CO₂ passivamente</small></button>
+                </div>
+            </div>
+
+            <!-- Painel de Logs de Eventos -->
+            <div class="console-log">
+                <p id="log-text">🚜 Central de Comando: Simulador iniciado. Aguardando ordens...</p>
+            </div>
+
+            <button id="btn-finish-sim" class="btn btn-stop-sim">Encerrar e Ver Relatório <i class="fa-solid fa-square-poll-horizontal"></i></button>
         </div>
 
-        <!-- Tela de Pontuação Final -->
+        <!-- 3. TELA DE BALANÇO AMBIENTAL FINAL -->
         <div id="end-screen" class="screen hidden">
             <div class="trophy-container">
-                <i class="fa-solid fa-trophy giant-icon gold"></i>
+                <i id="end-icon" class="fa-solid fa-trophy giant-icon gold"></i>
             </div>
-            <h2>Relatório da Fazenda!</h2>
-            <p class="final-score-text">Sua propriedade conseguiu segurar:</p>
-            <div class="final-score"><span id="total-carbon">0</span> t de CO₂</div>
+            <h2>Balanço Geral da Safra</h2>
+            <div class="final-report-grid">
+                <p>Carbono Total Guardado: <strong id="res-co2">0</strong> t</p>
+                <p>Dinheiro em Caixa: <strong>R$ <span id="res-money">0</span></strong></p>
+                <p>Total de Grãos Produzidos: <strong><span id="res-grains">0</span> kg</strong></p>
+            </div>
             
-            <p id="rank-message">Carregando resultado...</p>
+            <p id="rank-message">Carregando auditoria ambiental...</p>
             
-            <button id="btn-restart" class="btn"><i class="fa-solid fa-arrow-rotate-left"></i> Recomeçar Cultivo</button>
+            <button id="btn-restart" class="btn"><i class="fa-solid fa-arrow-rotate-left"></i> Iniciar Novo Ano Agrícola</button>
         </div>
 
     </main>
 
     <footer>
-        <p>&copy; 2026 Projeto Agrinho - O Futuro do Campo Sustentável.</p>
+        <p>&copy; 2026 Projeto Agrinho - Simulador de Manejo Automatizado.</p>
     </footer>
 
     <script src="script.js"></script>

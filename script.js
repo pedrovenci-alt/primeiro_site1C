@@ -1,189 +1,242 @@
-// Banco de dados com os cenários temáticos do jogo
-const cenarios = [
-    {
-        titulo: "Rodada 1: Preparo do Solo e Maquinário",
-        desc: "Os fazendeiros precisam preparar a terra para a próxima safra. Qual trator e método de manejo escolher para não poluir?",
-        icone: "fa-tractor",
-        opcoes: {
-            A: {
-                texto: "🚜 Arado Turbinado: Passar máquinas pesadas para revirar profundamente a terra de uma vez.",
-                carbono: 10,
-                feedback: "Muuu! Os animais sentiram o calor. Revirar o solo com máquinas pesadas expõe a terra e joga o carbono guardado direto para a atmosfera!"
-            },
-            B: {
-                texto: "🌱 Plantio Direto: Usar semeadoras leves para perfurar apenas o local exato da semente sobre a palha.",
-                carbono: 50,
-                feedback: "Excelente! As colheitadeiras e tratores leves economizam combustível e a palha antiga retém a umidade e o carbono no chão!"
-            }
-        }
-    },
-    {
-        titulo: "Rodada 2: Escoamento e Transporte",
-        desc: "Caminhões carregados de grãos precisam levar a colheita até a cooperativa. Como otimizar essa logística?",
-        icone: "fa-truck-field",
-        opcoes: {
-            A: {
-                texto: "🌳 Agrofloresta e Logística Verde: Plantar linhas de árvores na fazenda e usar caminhões com biocombustível.",
-                carbono: 60,
-                feedback: "Sensacional! As árvores criam corredores ecológicos que capturam o CO₂ dos escapamentos. Os caminhoneiros e a natureza agradecem!"
-            },
-            B: {
-                texto: "🌾 Transporte Tradicional: Rodar com os caminhões antigos sem manutenção e queimar o capim seco das margens.",
-                carbono: 15,
-                feedback: "Bah... Caminhões desregulados soltam fumaça preta cheia de fuligem, e queimar o mato joga toneladas de gases poluentes no ar."
-            }
-        }
-    },
-    {
-        titulo: "Rodada 3: Manejo Pós-Colheita",
-        desc: "As colheitadeiras terminaram o trabalho e o campo de cultivo está vazio. Qual a melhor decisão antes que o inverno chegue?",
-        icone: "fa-user-wheat",
-        opcoes: {
-            A: {
-                texto: "🟤 Campo Deserto: Deixar o solo exposto ao vento e à chuva até a próxima primavera.",
-                carbono: 5,
-                feedback: "Ah não... Sem plantas, o vento forte leva a camada fértil embora e o carbono precioso escapa do solo desprotegido."
-            },
-            B: {
-                texto: "🌿 Plantas de Cobertura: Colocar os fazendeiros para plantar braquiária ou crotalária para proteger a terra.",
-                carbono: 45,
-                feedback: "Isso aí! Raízes vivas continuam alimentando os microrganismos do solo e estocam o carbono de forma 100% natural!"
-            }
-        }
-    }
-];
+// VARIÁVEIS DE ESTADO DO SIMULADOR (FARMING ENGINE)
+let dinheiro = 500;
+let graosEstoque = 0;
+let carbonoRetido = 0;
 
-// Estado interno da partida
-let rodadaAtual = 0;
-let totalCarbono = 0;
+let temBiocombustivel = false;
+let ajudantesContratados = 0;
+let arvoresAgrofloresta = 0;
 
-// Elementos HTML capturados do DOM
+let estagioCampo = "vazio"; // vazio -> plantado -> crescendo -> pronto
+let progressoCrescimento = 0;
+let loopCrescimento = null;
+
+// Capturando Elementos da Interface
 const startScreen = document.getElementById('start-screen');
 const gameScreen = document.getElementById('game-screen');
 const endScreen = document.getElementById('end-screen');
 
-const btnStart = document.getElementById('btn-start');
-const btnNext = document.getElementById('btn-next');
-const btnRestart = document.getElementById('btn-restart');
+// Componentes do HUD
+const hudMoney = document.getElementById('hud-money');
+const hudGrains = document.getElementById('hud-grains');
+const hudCo2 = document.getElementById('hud-co2');
+const fieldStatusText = document.getElementById('field-text-status');
+const cropProgressBar = document.getElementById('crop-progress-bar');
+const logText = document.getElementById('log-text');
 
-// Novos Elementos da Tela Inicial Explicativa
-const btnWhatIs = document.getElementById('btn-what-is');
-const btnTips = document.getElementById('btn-tips');
-const btnCloseInfo = document.getElementById('btn-close-info');
-const infoPanel = document.getElementById('info-panel');
-const infoTitle = document.getElementById('info-title');
-const infoContent = document.getElementById('info-content');
+// Botões Operacionais
+const btnPlant = document.getElementById('btn-plant');
+const btnHarvest = document.getElementById('btn-harvest');
+const btnSell = document.getElementById('btn-sell');
 
-const txtCurrentRound = document.getElementById('current-round');
-const txtCarbonScore = document.getElementById('carbon-score');
-const txtScenTitle = document.getElementById('scenario-title');
-const txtScenDesc = document.getElementById('scenario-desc');
-const iconScen = document.getElementById('scen-icon');
+// Botões de Loja/Upgrade
+const btnBuyBiofuel = document.getElementById('btn-buy-biofuel');
+const btnBuyFarmer = document.getElementById('btn-buy-farmer');
+const btnBuyTrees = document.getElementById('btn-buy-trees');
 
-const btnChoiceA = document.getElementById('choice-a');
-const btnChoiceB = document.getElementById('choice-b');
-const feedbackBox = document.getElementById('feedback-box');
-const txtFeedback = document.getElementById('feedback-text');
+// Elementos Visuais do Cenário de Fundo
+const animTruck = document.getElementById('anim-truck');
+const animHarvester = document.getElementById('anim-harvester');
+const animFarmer1 = document.getElementById('anim-farmer1');
+const animFarmer2 = document.getElementById('anim-farmer2');
 
-// Ouvintes de eventos (Cliques)
-btnStart.addEventListener('click', iniciarJogo);
-btnChoiceA.addEventListener('click', () => fazerEscolha('A'));
-btnChoiceB.addEventListener('click', () => fazerEscolha('B'));
-btnNext.addEventListener('click', avancarRodada);
-btnRestart.addEventListener('click', reiniciarJogo);
+// Ouvintes de Telas Informativas (Manual)
+document.getElementById('btn-what-is').addEventListener('click', () => abrirPainelInfo(1));
+document.getElementById('btn-tips').addEventListener('click', () => abrirPainelInfo(2));
+document.getElementById('btn-close-info').addEventListener('click', () => document.getElementById('info-panel').classList.add('hidden'));
 
-// Novos Ouvintes para Explicações Pedagógicas
-btnWhatIs.addEventListener('click', mostrarOQueE);
-btnTips.addEventListener('click', mostrarDicas);
-btnCloseInfo.addEventListener('click', () => infoPanel.classList.add('hidden'));
+// Ouvintes de Ação do Jogo
+document.getElementById('btn-start').addEventListener('click', ligarSimulador);
+btnPlant.addEventListener('click', executarSemeadura);
+btnHarvest.addEventListener('click', executarColheita);
+btnSell.addEventListener('click', executarEscoamento);
 
-function iniciarJogo() {
+// Ouvintes de Compra de Melhorias
+btnBuyBiofuel.addEventListener('click', adquirirBiocombustivel);
+btnBuyFarmer.addEventListener('click', adquirirAjudante);
+btnBuyTrees.addEventListener('click', adquirirAgrofloresta);
+document.getElementById('btn-finish-sim').addEventListener('click', finalizarSimulador);
+document.getElementById('btn-restart').addEventListener('click', () => { location.reload(); });
+
+// INICIALIZADOR DO SIMULADOR
+function ligarSimulador() {
     startScreen.classList.add('hidden');
-    endScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
-    rodadaAtual = 0;
-    totalCarbono = 0;
-    carregarRodada();
-}
-
-// Funções para exibir os textos de ajuda na tela inicial
-function mostrarOQueE() {
-    infoPanel.classList.remove('hidden');
-    infoPanel.style.backgroundColor = "#e3f2fd";
-    infoPanel.style.borderColor = "#1e88e5";
-    infoTitle.innerHTML = "<i class='fa-solid fa-cloud-sun'></i> O que é Carbonização no Campo?";
-    infoContent.innerHTML = "<p>As plantas puxam o gás poluente do ar (CO₂) para crescer. Quando fazemos um manejo correto, esse carbono fica <strong>guardado dentro da terra</strong> e nas raízes! Se usarmos técnicas erradas, o solo se desgasta e solta toda a poluição de volta para a atmosfera, aquecendo o planeta.</p>";
-}
-
-function mostrarDicas() {
-    infoPanel.classList.remove('hidden');
-    infoPanel.style.backgroundColor = "#f3e5f5";
-    infoPanel.style.borderColor = "#8e24aa";
-    infoTitle.innerHTML = "<i class='fa-solid fa-lightbulb'></i> Dicas para Ganhar Pontos:";
-    infoContent.innerHTML = `
-        <ul>
-            <li>🌾 <strong>Evite revirar a terra:</strong> Prefira maquinários leves e o Plantio Direto.</li>
-            <li>🌳 <strong>Plante árvores:</strong> Elas dão sombra para as vacas e aspiram poluentes.</li>
-            <li>🌿 <strong>Nunca deixe o chão nulo:</strong> Plantas de cobertura mantêm o subsolo ativo e protegido!</li>
-        </ul>
-    `;
-}
-
-function carregarRodada() {
-    feedbackBox.classList.add('hidden');
-    btnChoiceA.disabled = false;
-    btnChoiceB.disabled = false;
-
-    txtCurrentRound.innerText = `${rodadaAtual + 1}/${cenarios.length}`;
-    txtCarbonScore.innerText = `${totalCarbono} t`;
-
-    const dadosCenario = cenarios[rodadaAtual];
-    txtScenTitle.innerText = dadosCenario.titulo;
-    txtScenDesc.innerText = dadosCenario.desc;
+    atualizarPainelHUD();
     
-    iconScen.className = `fa-solid ${dadosCenario.icone}`;
-
-    btnChoiceA.innerText = dadosCenario.opcoes.A.texto;
-    btnChoiceB.innerText = dadosCenario.opcoes.B.texto;
+    // Geração passiva de carbono por Agrofloresta (Ciclo Automático)
+    setInterval(() => {
+        if(arvoresAgrofloresta > 0) {
+            carbonoRetido += arvoresAgrofloresta * 2;
+            atualizarPainelHUD();
+        }
+    }, 3000);
 }
 
-function fazerEscolha(opcao) {
-    btnChoiceA.disabled = true;
-    btnChoiceB.disabled = true;
-
-    const escolha = cenarios[rodadaAtual].opcoes[opcao];
-    totalCarbono += escolha.carbono;
-
-    txtCarbonScore.innerText = `${totalCarbono} t`;
-    txtFeedback.innerHTML = escolha.feedback;
-    feedbackBox.classList.remove('hidden');
+// LOG DE EVENTOS
+function registrarLog(mensagem) {
+    logText.innerText = "🚜 " + mensagem;
 }
 
-function avancarRodada() {
-    rodadaAtual++;
-    if (rodadaAtual < cenarios.length) {
-        carregarRodada();
-    } else {
-        mostrarFimDeJogo();
+// ATUALIZAÇÃO HUD
+function atualizarPainelHUD() {
+    hudMoney.innerText = `R$ ${dinheiro}`;
+    hudGrains.innerText = `${graosEstoque} kg`;
+    hudCo2.innerText = `${carbonoRetido} t`;
+
+    // Atualiza travas dos botões de compra baseados em dinheiro
+    btnBuyBiofuel.disabled = temBiocombustivel || dinheiro < 200;
+    btnBuyFarmer.disabled = ajudantesContratados >= 2 || dinheiro < 300;
+    btnBuyTrees.disabled = dinheiro < 150;
+}
+
+// MECÂNICA 1: SEMEADURA (PLANTAR)
+function executarSemeadura() {
+    if (estagioCampo !== "vazio") return;
+
+    estagioCampo = "crescendo";
+    btnPlant.disabled = true;
+    fieldStatusText.innerText = "🌱 As sementes estão germinando no subsolo...";
+    registrarLog("Semeadoras em campo. Plantio Direto ativado para proteger o solo!");
+
+    progressoCrescimento = 0;
+    loopCrescimento = setInterval(() => {
+        progressoCrescimento += 10;
+        cropProgressBar.style.width = progressoCrescimento + "%";
+
+        if (progressoCrescimento >= 100) {
+            clearInterval(loopCrescimento);
+            estagioCampo = "pronto";
+            fieldStatusText.innerText = "🌾 O milho cresceu e está pronto para colheita!";
+            btnHarvest.disabled = false;
+            registrarLog("Plantação madura! Ligue a colheitadeira.");
+        }
+    }, 400);
+}
+
+// MECÂNICA 2: COLHEITA
+function executarColheita() {
+    if (estagioCampo !== "pronto") return;
+
+    animHarvester.classList.remove('hidden'); // Ativa animação 2D
+    btnHarvest.disabled = true;
+    
+    setTimeout(() => {
+        animHarvester.classList.add('hidden');
+        estagioCampo = "vazio";
+        graosEstoque += 500;
+        
+        // Penalidade Ecológica ou Bônus por Combustível
+        if (temBiocombustivel) {
+            carbonoRetido += 40;
+            registrarLog("Colheita concluída com Biocombustível! +40t de CO₂ retidos.");
+        } else {
+            carbonoRetido += 10;
+            registrarLog("Colheita feita com Diesel comum. Emissão alta de poluentes.");
+        }
+
+        cropProgressBar.style.width = "0%";
+        fieldStatusText.innerText = "🪵 Solo vazio. Pronto para nova rotação de culturas.";
+        btnSell.disabled = false;
+        btnPlant.disabled = false;
+        atualizarPainelHUD();
+
+        // Automação: Se tiver ajudante, ele planta de novo sozinho!
+        if(ajudantesContratados > 0) {
+            setTimeout(executarSemeadura, 1000);
+        }
+    }, 2000);
+}
+
+// MECÂNICA 3: ESCOAMENTO (VENDER GRÃOS)
+function executarEscoamento() {
+    if (graosEstoque <= 0) return;
+
+    animTruck.classList.remove('hidden'); // Ativa caminhão na rodovia
+    btnSell.disabled = true;
+
+    setTimeout(() => {
+        animTruck.classList.add('hidden');
+        let lucro = (graosEstoque / 500) * 350;
+        dinheiro += lucro;
+        graosEstoque = 0;
+
+        registrarLog(`Safra vendida na Cooperativa! Faturamento de R$ ${lucro}.`);
+        atualizarPainelHUD();
+    }, 2000);
+}
+
+// UPGRADES DA LOJA
+function adquirirBiocombustivel() {
+    if(dinheiro >= 200 && !temBiocombustivel) {
+        dinheiro -= 200;
+        temBiocombustivel = true;
+        registrarLog("Maquinários adaptados para Biodiesel. Menos fumaça no céu!");
+        atualizarPainelHUD();
     }
 }
 
-function mostrarFimDeJogo() {
+function adquirirAjudante() {
+    if(dinheiro >= 300 && ajudantesContratados < 2) {
+        dinheiro -= 300;
+        ajudantesContratados++;
+        if(ajudantesContratados === 1) animFarmer1.classList.remove('hidden');
+        if(ajudantesContratados === 2) animFarmer2.classList.remove('hidden');
+
+        registrarLog("Novo colono contratado! Ele fará o plantio automático.");
+        atualizarPainelHUD();
+        if(estagioCampo === "vazio") executarSemeadura();
+    }
+}
+
+function adquirirAgrofloresta() {
+    if(dinheiro >= 150) {
+        dinheiro -= 150;
+        arvoresAgrofloresta++;
+        carbonoRetido += 20; // Bônus imediato
+        registrarLog(`Linha de árvores plantada! Sequestro passivo de CO₂ ativado.`);
+        atualizarPainelHUD();
+    }
+}
+
+// INSTRUÇÕES PEDAGÓGICAS
+function abrirPainelInfo(tipo) {
+    const panel = document.getElementById('info-panel');
+    const title = document.getElementById('info-title');
+    const content = document.getElementById('info-content');
+    panel.classList.remove('hidden');
+
+    if(tipo === 1) {
+        title.innerHTML = "<i class='fa-solid fa-leaf'></i> Ciclo do Carbono Prático";
+        content.innerHTML = "<p>O trator a diesel comum emite fumaça poluente. Ao comprar o <strong>Biocombustível</strong> ou plantar <strong>Árvores (Agrofloresta)</strong>, sua fazenda compensa as emissões das colheitadeiras e estoca o carbono no solo.</p>";
+    } else {
+        title.innerHTML = "<i class='fa-solid fa-book'></i> Estratégia de Lucro Sustentável";
+        content.innerHTML = "<p>1. Clique em <strong>Plantar</strong> e aguarde a barra encher.<br>2. Use a <strong>Colheitadeira</strong> para gerar Grãos em estoque.<br>3. Envie o <strong>Caminhão</strong> para faturar dinheiro e reinvestir em automações ecológicas!</p>";
+    }
+}
+
+// TELA FINAL: AUDITORIA
+function finalizarSimulador() {
+    if(loopCrescimento) clearInterval(loopCrescimento);
     gameScreen.classList.add('hidden');
     endScreen.classList.remove('hidden');
 
-    document.getElementById('total-carbon').innerText = totalCarbono;
+    document.getElementById('res-co2').innerText = carbonoRetido;
+    document.getElementById('res-money').innerText = dinheiro;
+    document.getElementById('res-grains').innerText = carbonoRetido * 12; // Estimativa de produção total
 
     const txtRank = document.getElementById('rank-message');
-    if (totalCarbono >= 145) {
-        txtRank.innerHTML = "🏆 <strong>Super Fazenda Carbono Zero!</strong><br>Incrível! Seus fazendeiros operaram colheitadeiras e caminhões com máxima eficiência ecológica. O solo está rico e o ar puríssimo!";
-    } else if (totalCarbono >= 80) {
-        txtRank.innerHTML = "🌱 <strong>Operador Consciente!</strong><br>Bom trabalho! Suas escolhas ajudaram a conter parte dos gases poluentes. Tente investir mais em plantio direto na próxima!";
+    const icon = document.getElementById('end-icon');
+
+    if (carbonoRetido >= 150) {
+        icon.className = "fa-solid fa-medal giant-icon gold";
+        txtRank.innerHTML = "🏆 <strong>Fazenda de Elite Agrinho 2026!</strong><br>Incrível! Você automatizou sua propriedade e mitigou as emissões dos caminhões com eficiência máxima. O campo prosperou 100% verde!";
+    } else if (carbonoRetido >= 60) {
+        icon.className = "fa-solid fa-wheat-awn giant-icon";
+        txtRank.innerHTML = "🌱 <strong>Produtor Consciente!</strong><br>Ótimo gerenciamento! Suas colheitas renderam lucros, mas lembre-se de comprar mais árvores e biocombustível para limpar o escapamento dos caminhões.";
     } else {
-        txtRank.innerHTML = "⚠️ <strong>Alerta de Emissões Altos!</strong><br>Ih! As chaminés dos caminhões e o solo desprotegido deixaram a nossa maquete cinza. Que tal tentar de novo com tecnologia limpa?";
+        icon.className = "fa-solid fa-triangle-exclamation giant-icon";
+        txtRank.innerHTML = "⚠️ <strong>Propriedade Multada por Emissões!</strong><br>A colheita pesada liberou mais gases do que o solo conseguiu reter. Tente jogar novamente investindo cedo em reflorestamento e combustíveis limpos!";
     }
 }
 
-function reiniciarJogo() {
-    iniciarJogo();
-}
