@@ -1,63 +1,63 @@
-// Banco de dados com as rodadas do jogo
+// Banco de dados com os cenários do jogo
 const cenarios = [
     {
         titulo: "Rodada 1: Preparo do Solo",
-        desc: "Chegou o momento de preparar o terreno para a próxima safra de soja. O que você decide fazer?",
+        desc: "O bezerrinho e os animais querem saber: Como vamos preparar a terra para plantar sem estragar o solo?",
         icone: "fa-tractor",
         opcoes: {
             A: {
-                texto: "A) Usar o Arado Tradicional: Revirar bem a terra para limpar tudo de forma rápida.",
+                texto: "🚜 Usar Arado Pesado: Passar a máquina e revirar toda a terra profundamente.",
                 carbono: 10,
-                feedback: "Putz! Revirar o solo expõe a matéria orgânica ao oxigênio, liberando muito CO₂ acumulado na atmosfera. Você ganhou pouquíssimo carbono sólido (10t)."
+                feedback: "Muuu! A vaquinha ficou triste. Revirar o solo joga todo o carbono guardado direto para o céu, gerando poluição!"
             },
             B: {
-                texto: "B) Implementar Plantio Direto: Semear direto sobre a palhada da colheita anterior, protegendo o chão.",
+                texto: "🌱 Plantio Direto: Furar apenas o local da semente e manter a palha velha protegendo o chão.",
                 carbono: 50,
-                feedback: "Excelente escolha! Manter o solo coberto evita a erosão e prende o carbono profundamente na terra! (+50t de CO₂ retidos)."
+                feedback: "Perfeito! A terra fica fresquinha, protegida da chuva e segura muito carbono no subsolo! Os animais adoraram!"
             }
         }
     },
     {
-        titulo: "Rodada 2: Otimizando o Espaço",
-        desc: "Você tem uma área de pastagem desgastada e quer melhorar a produtividade e a pegada ecológica da fazenda. Qual o plano?",
-        icone: "fa-tree",
+        titulo: "Rodada 2: Plantações e Árvores",
+        desc: "O campo de pasto está muito quente. O que fazer para melhorar a vida do gado e ajudar a natureza?",
+        icone: "fa-cow",
         opcoes: {
             A: {
-                texto: "A) Sistema ILPF: Integrar fileiras de árvores nativas/eucaliptos junto com o pasto e o gado.",
+                texto: "🌳 Sistema de Integração (ILPF): Plantar linhas de árvores no meio do pasto.",
                 carbono: 60,
-                feedback: "Incrível! As árvores crescem sugando o CO₂ do ar, e a sombra melhora o bem-estar do gado. Um golaço ecológico! (+60t de CO₂ retidos)."
+                feedback: "Sensacional! As árvores dão sombra gostosa para os animais e puxam toneladas de CO₂ do ar enquanto crescem!"
             },
             B: {
-                texto: "B) Pastagem Comum: Apenas colocar mais fertilizantes químicos industriais para o capim crescer rápido.",
+                texto: "🌾 Pasto Aberto: Deixar só o capim e colocar adubo químico forte para crescer rápido.",
                 carbono: 15,
-                feedback: "Cuidado! O excesso de adubos químicos pode liberar óxido nitroso (outro gás poluente) e não ajuda a estocar muito carbono no solo a longo prazo. (+15t)."
+                feedback: "Bah... Sem árvores, o sol queima o solo e o adubo químico solta gases perigosos no ar da fazenda."
             }
         }
     },
     {
-        titulo: "Rodada 3: Proteção de Entressafra",
-        desc: "Sua colheita principal acabou. O que fazer com o campo vazio durante o período de inverno/seca?",
-        icone: "fa-seedling",
+        titulo: "Rodada 3: O Inverno Chegou",
+        desc: "Depois de colher o milho, o chão vai ficar vazio. Qual a melhor estratégia até a próxima primavera?",
+        icone: "fa-wheat-awn",
         opcoes: {
             A: {
-                texto: "A) Deixar em Pousio: Deixar a terra descansando sem nada plantado até a próxima grande safra.",
+                texto: "🟤 Chão Descoberto: Deixar a terra sem nada, descansando sob o tempo.",
                 carbono: 5,
-                feedback: "Vixe... Solo nu fica exposto ao sol e chuva, destruindo microrganismos bons e liberando o restante do carbono estocado. (+5t)."
+                feedback: "Ah não... O vento e o calor levam embora os nutrientes e o carbono que restavam na terra nua."
             },
             B: {
-                texto: "B) Adubação Verde: Plantar espécies de cobertura (como braquiária ou crotalária) apenas para proteger o solo.",
+                texto: "🌿 Plantas de Cobertura: Cobrir o solo com braquiária ou leguminosas para adubar a terra.",
                 carbono: 45,
-                feedback: "Perfeito! Essas plantas criam biomassa rica em carbono e consertam o solo biologicamente para o futuro. (+45t de CO₂ retidos)."
+                feedback: "Isso aí! Raízes vivas continuam alimentando o solo e estocando carbono puro de forma 100% natural!"
             }
         }
     }
 ];
 
-// Variáveis de estado do jogo
+// Estado interno do jogo
 let rodadaAtual = 0;
 let totalCarbono = 0;
 
-// Elementos da Interface
+// Pegando os elementos HTML do DOM
 const startScreen = document.getElementById('start-screen');
 const gameScreen = document.getElementById('game-screen');
 const endScreen = document.getElementById('end-screen');
@@ -77,16 +77,16 @@ const btnChoiceB = document.getElementById('choice-b');
 const feedbackBox = document.getElementById('feedback-box');
 const txtFeedback = document.getElementById('feedback-text');
 
-// Eventos
+// Escutadores de eventos de clique
 btnStart.addEventListener('click', iniciarJogo);
 btnChoiceA.addEventListener('click', () => fazerEscolha('A'));
 btnChoiceB.addEventListener('click', () => fazerEscolha('B'));
-btnNext.addEventListener('click', avançarRodada);
+btnNext.addEventListener('click', avancarRodada);
 btnRestart.addEventListener('click', reiniciarJogo);
 
-// Funções do Jogo
 function iniciarJogo() {
     startScreen.classList.add('hidden');
+    endScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
     rodadaAtual = 0;
     totalCarbono = 0;
@@ -105,7 +105,7 @@ function carregarRodada() {
     txtScenTitle.innerText = dadosCenario.titulo;
     txtScenDesc.innerText = dadosCenario.desc;
     
-    // Atualiza o ícone dinamicamente
+    // Troca o ícone da pergunta
     iconScen.className = `fa-solid ${dadosCenario.icone}`;
 
     btnChoiceA.innerText = dadosCenario.opcoes.A.texto;
@@ -113,22 +113,18 @@ function carregarRodada() {
 }
 
 function fazerEscolha(opcao) {
-    // Bloqueia cliques repetidos
     btnChoiceA.disabled = true;
     btnChoiceB.disabled = true;
 
     const escolha = cenarios[rodadaAtual].opcoes[opcao];
     totalCarbono += escolha.carbono;
 
-    // Atualiza placar imediato
     txtCarbonScore.innerText = `${totalCarbono} t`;
-
-    // Mostra o texto explicativo (Pedagógico do Agrinho)
     txtFeedback.innerHTML = escolha.feedback;
     feedbackBox.classList.remove('hidden');
 }
 
-function avançarRodada() {
+function avancarRodada() {
     rodadaAtual++;
     if (rodadaAtual < cenarios.length) {
         carregarRodada();
@@ -143,18 +139,16 @@ function mostrarFimDeJogo() {
 
     document.getElementById('total-carbon').innerText = totalCarbono;
 
-    // Mensagem de classificação baseada na pontuação
     const txtRank = document.getElementById('rank-message');
     if (totalCarbono >= 140) {
-        txtRank.innerHTML = "🏆 <strong>Classificação: Produtor Carbono Zero Lendário!</strong><br>Suas escolhas foram impecáveis. Sua fazenda é referência global em sustentabilidade no Agrinho 2026!";
+        txtRank.innerHTML = "🏆 <strong>Fazenda Nota 10!</strong><br>Incrível! Você é um herói do meio ambiente. Sua fazenda retém o máximo de carbono possível!";
     } else if (totalCarbono >= 80) {
-        txtRank.innerHTML = "🌱 <strong>Classificação: Produtor Consciente.</strong><br>Bom trabalho! Você aplicou técnicas valiosas, mas ainda dá para reter mais carbono evitando os métodos tradicionais.";
+        txtRank.innerHTML = "🌱 <strong>Fazendeiro Consciente!</strong><br>Bom trabalho! Suas escolhas ajudaram a fazendinha, mas tente usar mais árvores e plantio direto na próxima!";
     } else {
-        txtRank.innerHTML = "⚠️ <strong>Classificação: Alerta de Emissões!</strong><br>Sua fazenda liberou muito gás estufa. Que tal jogar de novo e focar em Plantio Direto e árvores para salvar seu solo?";
+        txtRank.innerHTML = "⚠️ <strong>Alerta de Poluição!</strong><br>Ih! O céu da fazenda ficou cinza. Vamos jogar de novo para aprender a segurar esse carbono no chão?";
     }
 }
 
 function reiniciarJogo() {
-    endScreen.classList.add('hidden');
     iniciarJogo();
 }

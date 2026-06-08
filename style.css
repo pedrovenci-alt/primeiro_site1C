@@ -2,10 +2,11 @@
     --primary: #2e7d32;
     --primary-dark: #1b5e20;
     --accent: #ffb300;
-    --bg-dark: #121812;
+    --sky: #87ceeb;
+    --dirt: #8d6e63;
+    --grass: #4caf50;
     --card-bg: #ffffff;
     --text-color: #2c3e50;
-    --light-gray: #f4f7f4;
 }
 
 * {
@@ -16,19 +17,108 @@
 }
 
 body {
-    background-color: var(--light-gray);
+    background-color: var(--sky);
     color: var(--text-color);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
 }
 
-/* Header */
+/* --- ENTRADA TEMÁTICA ANIMADA (Cenário de Fundo) --- */
+.farm-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+/* Nuvens Passando */
+.cloud {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 3.5rem;
+    animation: floatClouds 25s linear infinite;
+}
+.cloud1 { top: 10%; left: -10%; }
+.cloud2 { top: 22%; left: -20%; animation-delay: 10s; font-size: 2.5rem; }
+
+@keyframes floatClouds {
+    0% { left: -15%; }
+    100% { left: 115%; }
+}
+
+/* Chão e Pasto */
+.fence {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 180px;
+    background: repeating-linear-gradient(90deg, var(--dirt), var(--dirt) 20px, #795548 20px, #795548 30px);
+    border-top: 15px solid #ffcc80;
+}
+
+.farm-scenery {
+    position: absolute;
+    bottom: 120px;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding: 0 5%;
+}
+
+.farm-item {
+    font-size: 3rem;
+    filter: drop-shadow(2px 4px 5px rgba(0,0,0,0.15));
+}
+
+/* Animações dos Personagens */
+.tractor-anim {
+    color: #d32f2f;
+    animation: drive 12s linear infinite;
+    position: absolute;
+}
+
+.cow-anim {
+    color: #424242;
+    animation: chew 2s ease-in-out infinite alternate;
+}
+
+.plant-anim { color: #81c784; }
+.p1 { animation: grow 3s ease-in-out infinite alternate; }
+.p2 { color: #ffe082; animation: grow 2.5s ease-in-out infinite alternate 0.5s; }
+.p3 { animation: grow 3.5s ease-in-out infinite alternate 1s; }
+
+@keyframes drive {
+    0% { left: -10%; transform: scaleX(1); }
+    49% { transform: scaleX(1); }
+    50% { left: 110%; transform: scaleX(-1); }
+    99% { transform: scaleX(-1); }
+    100% { left: -10%; transform: scaleX(1); }
+}
+
+@keyframes chew {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-5px) rotate(2deg); }
+}
+
+@keyframes grow {
+    0% { transform: scale(0.9) translateY(5px); }
+    100% { transform: scale(1.1) translateY(0); }
+}
+
+/* --- INTERFACE DO JOGO --- */
 header {
     background-color: var(--primary-dark);
     color: white;
-    padding: 15px 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 12px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .header-flex {
@@ -36,186 +126,128 @@ header {
     justify-content: space-between;
     align-items: center;
     width: 90%;
-    max-width: 800px;
+    max-width: 700px;
     margin: 0 auto;
 }
 
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-}
+.logo { font-size: 1.6rem; font-weight: bold; }
+.logo span { color: var(--accent); }
+.badge { background: var(--accent); color: #000; padding: 4px 12px; border-radius: 15px; font-weight: bold; font-size: 0.85rem; }
 
-.logo span {
-    color: var(--accent);
-}
-
-.badge {
-    background: rgba(255,255,255,0.2);
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-/* Game Container Box */
 .game-container {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    z-index: 10;
 }
 
 .screen {
     background: var(--card-bg);
     width: 100%;
-    max-width: 600px;
-    padding: 40px 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    max-width: 550px;
+    padding: 35px 25px;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
     text-align: center;
-    transition: all 0.3s ease;
+    border: 4px solid var(--primary);
 }
 
-.giant-icon {
-    font-size: 4.5rem;
-    color: var(--primary);
-    margin-bottom: 20px;
-    display: inline-block;
-}
-
-.gold {
-    color: var(--accent);
-}
-
-h1 {
-    font-size: 2rem;
+.welcome-badge {
+    background-color: #e8f5e9;
     color: var(--primary-dark);
+    padding: 6px 16px;
+    border-radius: 20px;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.85rem;
     margin-bottom: 15px;
 }
 
-p {
-    font-size: 1.05rem;
-    line-height: 1.6;
-    color: #555;
-    margin-bottom: 25px;
-}
+h1 { font-size: 1.8rem; color: var(--primary-dark); margin-bottom: 15px; font-weight: 800; }
+p { font-size: 1rem; line-height: 1.6; color: #455a64; margin-bottom: 25px; }
 
 /* Botões */
 .btn {
     background-color: var(--primary);
     color: white;
     border: none;
-    padding: 12px 28px;
+    padding: 12px 30px;
     font-size: 1rem;
     font-weight: bold;
-    border-radius: 30px;
+    border-radius: 50px;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
+    transition: all 0.2s ease;
 }
 
-.btn:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-2px);
+.btn:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+.btn-large { font-size: 1.15rem; padding: 15px 40px; }
+
+.animate-pulse {
+    animation: pulse 2s infinite;
 }
 
-.btn-large {
-    font-size: 1.2rem;
-    padding: 15px 40px;
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+    100% { transform: scale(1); }
 }
 
 /* Painel de Pontos */
 .scoreboard {
     display: flex;
     justify-content: space-between;
-    background: var(--light-gray);
+    background: #f1f8e9;
     padding: 12px 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     margin-bottom: 25px;
+    border: 1px dashed var(--primary);
 }
 
-.score-item {
-    font-size: 1.1rem;
-    font-weight: bold;
-}
+.score-item { font-size: 1.05rem; font-weight: 700; }
+.score-item .val { color: var(--primary-dark); font-size: 1.2rem; }
 
-.score-item .val {
-    color: var(--primary);
-}
-
-/* Caixa do Cenário */
-.scenario-box {
-    margin-bottom: 30px;
-}
-
-.scenario-icon {
-    font-size: 2.5rem;
-    color: var(--primary);
-    margin-bottom: 10px;
-}
+/* Caixa de Pergunta */
+.scenario-box { margin-bottom: 25px; background: #fafafa; padding: 15px; border-radius: 12px; }
+.scenario-icon { font-size: 2.5rem; color: var(--accent); margin-bottom: 8px; }
 
 /* Escolhas */
-.choices-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
+.choices-container { display: flex; flex-direction: column; gap: 12px; }
 .choice-btn {
     background: white;
-    border: 2px solid #e0e0e0;
-    padding: 18px 20px;
-    font-size: 1rem;
+    border: 2px solid #cfd8dc;
+    padding: 15px 20px;
+    font-size: 0.95rem;
     text-align: left;
-    border-radius: 12px;
+    border-radius: 15px;
     cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s ease;
+    font-weight: 600;
     color: var(--text-color);
+    transition: all 0.2s ease;
 }
 
 .choice-btn:hover {
     border-color: var(--primary);
     background-color: #f1f8e9;
-    transform: scale(1.01);
+    transform: translateX(3px);
 }
 
-/* Feedback */
+/* Feedback Box */
 .feedback-box {
-    margin-top: 25px;
-    padding: 20px;
-    border-radius: 10px;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 15px;
     background-color: #e8f5e9;
     border: 1px solid #c8e6c9;
 }
-
-.feedback-box p {
-    margin-bottom: 15px;
-    font-weight: 500;
-}
+.feedback-box p { margin-bottom: 12px; font-size: 0.95rem; color: #1b5e20; }
 
 /* Fim de Jogo */
-.final-score {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: var(--primary-dark);
-    margin-bottom: 20px;
-}
+.trophy-container { margin-bottom: 15px; }
+.gold { color: var(--accent); font-size: 4rem; }
+.final-score { font-size: 2.2rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; }
 
-#rank-message {
-    font-weight: bold;
-    color: #444;
-}
-
-/* Utilitários */
-.hidden {
-    display: none !important;
-}
-
-footer {
-    text-align: center;
-    padding: 15px;
-    font-size: 0.85rem;
-    color: #888;
-    background: #eaeaea;
-}
+.hidden { display: none !important; }
+footer { text-align: center; padding: 12px; font-size: 0.8rem; color: #616161; background: rgba(255,255,255,0.9); z-index: 10; }
