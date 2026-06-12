@@ -3,51 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BioCarbon: O Desafio do Campo</title>
+    <title>BioCarbon Pro: Eco-Simulator</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="game-wrapper">
-        <header>
-            <h1>BioCarbon <i class="fas fa-leaf"></i></h1>
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <i class="fas fa-wallet"></i> 
-                    <span>R$ <span id="money">500</span></span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-smog"></i> 
-                    <div class="progress-bg"><div id="pollution-bar" class="progress-fill red" style="width: 20%"></div></div>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-seedling"></i> 
-                    <div class="progress-bg"><div id="sust-bar" class="progress-fill green" style="width: 50%"></div></div>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-seedling logo-icon"></i>
+                <h2>BioCarbon <span class="pro-tag">PRO</span></h2>
+            </div>
+            
+            <div class="status-group">
+                <h3>Recursos Financeiros</h3>
+                <div class="card status-card">
+                    <i class="fas fa-wallet icon-gold"></i>
+                    <div>
+                        <p class="label">Caixa da Fazenda</p>
+                        <p class="value">R$ <span id="money">1000</span></p>
+                    </div>
                 </div>
             </div>
-        </header>
 
-        <main id="game-screen">
-            <div class="event-card">
-                <div id="image-placeholder" class="scenario-image">
-                    <i class="fas fa-tractor fa-4x"></i>
+            <div class="status-group">
+                <h3>Indicadores Ambientais</h3>
+                <div class="metric">
+                    <div class="metric-header">
+                        <span><i class="fas fa-smog"></i> Pegada de Carbono</span>
+                        <span id="txt-carbon">20%</span>
+                    </div>
+                    <div class="progress-bar"><div id="bar-carbon" class="progress" style="width: 20%; background: #ff6b6b;"></div></div>
                 </div>
-                <h2 id="scenario-title">Bem-vindo, Fazendeiro!</h2>
-                <p id="scenario-desc">Você assumiu uma unidade de carbonização. O mercado exige carvão, mas o planeta exige cuidado. Suas decisões moldarão o futuro do campo.</p>
                 
-                <div id="info-didatica" class="info-box">
-                    <i class="fas fa-lightbulb"></i>
-                    <span id="fact-text">A carbonização é o processo de transformar biomassa (madeira) em carbono estável através do calor.</span>
+                <div class="metric">
+                    <div class="metric-header">
+                        <span><i class="fas fa-heart"></i> Saúde do Solo</span>
+                        <span id="txt-soil">50%</span>
+                    </div>
+                    <div class="progress-bar"><div id="bar-soil" class="progress" style="width: 50%; background: #51cf66;"></div></div>
                 </div>
             </div>
 
-            <div id="options-container" class="actions">
-                </div>
-        </main>
+            <div class="status-group">
+                <h3>Inventário</h3>
+                <ul class="inventory-list">
+                    <li><i class="fas fa-tree"></i> Madeira Úmida: <span id="inv-wood-wet">10t</span></li>
+                    <li><i class="fas fa-fire-smoke"></i> Madeira Seca: <span id="inv-wood-dry">0t</span></li>
+                    <li><i class="fas fa-flask"></i> Licor Pirolenhoso: <span id="inv-liquor">0L</span></li>
+                </ul>
+            </div>
+        </aside>
 
-        <footer>
-            <p>Rodada: <span id="round">1</span>/5</p>
-        </footer>
+        <main class="main-content">
+            <header class="main-header">
+                <div class="turn-badge">Rodada <span id="current-turn">1</span> de 6</div>
+                <div id="weather-badge" class="weather-badge"><i class="fas fa-sun"></i> Ensolarado</div>
+            </header>
+
+            <section class="game-screen">
+                <div class="main-card">
+                    <div class="card-header">
+                        <span class="category-tag" id="event-category">Manejo Inicial</span>
+                        <h1 id="event-title">Preparação da Biomassa</h1>
+                    </div>
+                    
+                    <p class="description" id="event-desc">Sua propriedade possui 10 toneladas de madeira recém-cortada. Deixar a madeira secar reduz a umidade de 50% para 20%, o que dobra a eficiência da carbonização e evita fumaça tóxica. O que fazer?</p>
+                    
+                    <div class="educational-alert">
+                        <i class="fas fa-graduation-cap"></i>
+                        <div>
+                            <strong>Ciência do Campo:</strong>
+                            <p id="event-fact">A água na madeira consome calor para evaporar dentro do forno. Isso reduz o rendimento de carvão e gera fumaça branca densa pirolenhosa rica em gases poluentes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-grid" id="choices-container">
+                    </div>
+            </section>
+        </main>
     </div>
     <script src="script.js"></script>
 </body>
