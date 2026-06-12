@@ -3,72 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O Guardião do Carbono</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #2e3440;
-            color: #d8dee9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .game-container {
-            background-color: #3b4252;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
-        }
-        h1 { color: #8fbcbb; }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-            background-color: #434c5e;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        .stat { font-weight: bold; }
-        .info-box {
-            background-color: #4c566a;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 1.1em;
-            line-height: 1.5;
-        }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background-color: #81a1c1;
-            color: #2e3440;
-            border: none;
-            border-radius: 6px;
-            font-size: 1em;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-        .btn:hover { background-color: #88c0d0; }
-    </style>
+    <title>BioCarbon: O Desafio do Campo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <div class="game-wrapper">
+        <header>
+            <h1>BioCarbon <i class="fas fa-leaf"></i></h1>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <i class="fas fa-wallet"></i> 
+                    <span>R$ <span id="money">500</span></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-smog"></i> 
+                    <div class="progress-bg"><div id="pollution-bar" class="progress-fill red" style="width: 20%"></div></div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-seedling"></i> 
+                    <div class="progress-bg"><div id="sust-bar" class="progress-fill green" style="width: 50%"></div></div>
+                </div>
+            </div>
+        </header>
 
-<div class="game-container">
-    <h1>O Guardião do Carbono 🌳🔥</h1>
-    
-    <div class="stats">
-        <div class="stat">💰 Dinheiro: <span id="money">100</span></div>
-        <div class="stat">🌱 Sustentabilidade: <span id="sust">50</span>%</div>
-        <div class="stat">⚡ Eficiência: <span id="ef">50</span>%</div>
+        <main id="game-screen">
+            <div class="event-card">
+                <div id="image-placeholder" class="scenario-image">
+                    <i class="fas fa-tractor fa-4x"></i>
+                </div>
+                <h2 id="scenario-title">Bem-vindo, Fazendeiro!</h2>
+                <p id="scenario-desc">Você assumiu uma unidade de carbonização. O mercado exige carvão, mas o planeta exige cuidado. Suas decisões moldarão o futuro do campo.</p>
+                
+                <div id="info-didatica" class="info-box">
+                    <i class="fas fa-lightbulb"></i>
+                    <span id="fact-text">A carbonização é o processo de transformar biomassa (madeira) em carbono estável através do calor.</span>
+                </div>
+            </div>
+
+            <div id="options-container" class="actions">
+                </div>
+        </main>
+
+        <footer>
+            <p>Rodada: <span id="round">1</span>/5</p>
+        </footer>
     </div>
-
-    <div class="info-box" id="text">
-        Bem-vindo ao campo! Você herdou a produção de carvão vegetal da família. Seu objetivo é modernizar o processo para
+    <script src="script.js"></script>
+</body>
+</html>
