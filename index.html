@@ -3,86 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farming Simulator Isométrico - Agrinho 2026</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cloudflare.com">
+    <title>O Guardião do Carbono</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2e3440;
+            color: #d8dee9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .game-container {
+            background-color: #3b4252;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 { color: #8fbcbb; }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background-color: #434c5e;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .stat { font-weight: bold; }
+        .info-box {
+            background-color: #4c566a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background-color: #81a1c1;
+            color: #2e3440;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .btn:hover { background-color: #88c0d0; }
+    </style>
 </head>
 <body>
 
-    <!-- HUD Superior do Simulador -->
-    <header>
-        <div class="container header-flex">
-            <div class="logo"><i class="fa-solid fa-tractor"></i> Farming<span>Sim</span></div>
-            <div class="badge">Piloto Agrinho 2026</div>
-        </div>
-    </header>
+<div class="game-container">
+    <h1>O Guardião do Carbono 🌳🔥</h1>
+    
+    <div class="stats">
+        <div class="stat">💰 Dinheiro: <span id="money">100</span></div>
+        <div class="stat">🌱 Sustentabilidade: <span id="sust">50</span>%</div>
+        <div class="stat">⚡ Eficiência: <span id="ef">50</span>%</div>
+    </div>
 
-    <!-- Painel Central -->
-    <main class="game-container">
-        
-        <!-- TELA INICIAL INTERATIVA -->
-        <div id="start-screen" class="screen">
-            <div class="welcome-badge"><i class="fa-solid fa-gamepad"></i> CONTROLE DO MOTOR</div>
-            <h1>Simulador: Pilote o Trator</h1>
-            <p>Use as <strong>Setas do Teclado</strong> ou <strong>W, A, S, D</strong> para dirigir o trator ecológico até as áreas de terra e cuidar da plantação!</p>
-            
-            <div class="menu-container">
-                <button id="btn-start" class="btn btn-large btn-play animate-pulse">
-                    <i class="fa-solid fa-play"></i> Ligar o Motor e Jogar
-                </button>
-                <div class="sub-menu">
-                    <button id="btn-what-is" class="btn btn-info">
-                        <i class="fa-solid fa-circle-question"></i> Como Jogar?
-                    </button>
-                </div>
-            </div>
-
-            <div id="info-panel" class="modal-info hidden">
-                <h3><i class="fa-solid fa-book"></i> Manual do Piloto</h3>
-                <p>🚜 Dirija o trator até o quadrado de terra.<br>🌱 Aperte <strong>ESPAÇO</strong> para plantar sementes.<br>🌾 Espere crescer (ficar amarelo) e aperte <strong>ESPAÇO</strong> de novo para colher!<br>🚚 Leve a colheita até o galpão no topo esquerdo para ganhar pontos de Carbono!<br>🛑 <strong>Cuidado:</strong> Desvie dos troncos das árvores espalhadas!</p>
-                <button id="btn-close-info" class="btn btn-close">Entendi! <i class="fa-solid fa-check"></i></button>
-            </div>
-        </div>
-
-        <!-- TELA DO JOGO ATIVO (CANVAS NATIVO) -->
-        <div id="game-screen" class="screen hidden game-canvas-wrapper">
-            
-            <!-- HUD de Recursos do Painel -->
-            <div class="simulator-hud">
-                <div class="hud-item timer"><i class="fa-solid fa-stopwatch"></i> Tempo: <span id="hud-timer">60s</span></div>
-                <div class="hud-item money"><i class="fa-solid fa-wheat-awn"></i> Carga: <span id="hud-grains">Vazio</span></div>
-                <div class="hud-item co2"><i class="fa-solid fa-cloud-arrow-down"></i> CO₂ Retido: <span id="hud-co2">0 t</span></div>
-            </div>
-
-            <!-- Mecanismo de renderização nativo sem travas -->
-            <canvas id="gameCanvas" width="600" height="400"></canvas>
-
-            <div class="console-log">
-                <p id="log-text">🎮 Use as setas para mover o trator até o lote de terra!</p>
-            </div>
-
-            <button id="btn-finish-sim" class="btn btn-stop-sim">Encerrar Turno e Ver Relatório</button>
-        </div>
-
-        <!-- TELA DE BALANÇO FINAL -->
-        <div id="end-screen" class="screen hidden">
-            <div class="trophy-container">
-                <i class="fa-solid fa-award giant-icon gold"></i>
-            </div>
-            <h2>Relatório de Desempenho do Piloto</h2>
-            <div class="final-report-grid">
-                <p>Carbono Total Sequestrado: <strong id="res-co2">0</strong> toneladas de CO₂</p>
-            </div>
-            <p id="rank-message">Avaliando sua rota sustentável...</p>
-            <button id="btn-restart" class="btn"><i class="fa-solid fa-arrow-rotate-left"></i> Reiniciar Trator</button>
-        </div>
-
-    </main>
-
-    <footer>
-        <p>&copy; 2026 Projeto Agrinho - Simulador de Direção Sustentável.</p>
-    </footer>
-
-    <script src="script.js"></script>
-</body>
-</html>
+    <div class="info-box" id="text">
+        Bem-vindo ao campo! Você herdou a produção de carvão vegetal da família. Seu objetivo é modernizar o processo para
